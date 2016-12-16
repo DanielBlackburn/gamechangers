@@ -1,0 +1,210 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../bower_components/parallax-container/parallax-container.html">
+
+<link rel="import" href="gc-icons.html">
+<link rel="import" href="gc-styles.html">
+<link rel="import" href="vimeo-player.html">
+
+</head><body><dom-module id="gc-app">
+  <template>
+    <style include="gc-styles">
+      :host {
+        --app-primary-color: white;
+        --app-secondary-color: black;
+
+        display: block;
+        padding: 0px;
+        overflow: hidden;
+      }
+    </style>
+
+
+
+    
+    <div class="container flex-horizontal">
+      <div style="position: relative; left: 0; top: 0">
+        <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px">
+        <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px">
+      </div>
+      <div class="flexchild">
+        <img src="/pictures/title.png" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px">
+        <p class="info">CLOSED ALPHA - VERSION</p>
+        <div style="height: 1px; background-color: #F8E81C"></div>
+
+          <div class="container flex-horizontal">
+            <div class="flexchild">
+              <h1 style="color: #F8E81C; font-size: 64px">Dear Alpha,</h1>
+              <p class="info">You are among select few who are given early access for Aalto Gamechangers website. We are gathering a timeline of events from the history of Aalto University and its predecessor schools, that has
+      had an impact for the Finnish society. We ask you to browse through the  preliminary content, comment with an anecdote or a insight relating to them or propose a new thing with a year that you think should be included. Plese remember that the perspective here is “gamechanger”, so we are looking for things that had enabled lot of other things and fundamentelly multidiciplinary. Thank you.</p>
+              </div>
+            <div class="flexchild">
+              <p></p>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    
+    <template is="dom-repeat" items="{{events}}" sort="sortEvents">
+
+      <div class="container flex-horizontal">
+
+        
+        <div class="year">
+          <template is="dom-if" if="{{yearIsFirstInDecade(item.from)}}">
+            <div style="font-weight: bold">{{eventYear(item.from)}}</div>
+          </template>
+          <template is="dom-if" if="{{!yearIsFirstInDecade(item.from)}}">
+            {{eventYear(item.from)}}
+          </template>
+        </div>
+
+        
+        <div class="flexchild">
+          <div class="commentColumn">
+            <div class="comment" id$="comment{{item.id}}" style="display: none">
+              <div class="flexchild">
+
+                 <div class="comment-container">
+
+                    <div class="comment-icon">
+                      <iron-icon icon="comment"></iron-icon>
+                    </div>
+
+                    <div class="comment-text">
+                      <template is="dom-repeat" items="{{item.latestPublicComments}}" as="comment">
+                        <p style="font-size: 18px">{{comment.notes}}</p>
+                        <p style="font-size: 11px">{{comment.name}}</p>
+                      </template>
+                    </div>
+
+                </div>
+
+              </div>
+              <div class="leftArrow">
+                <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="flexchild">
+          <paper-card>
+            <div class="event">
+              <div class="event-header" style="background-color: {{eventColour(item.type)}}">
+                <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
+                  <iron-icon icon="{{item.type}}" style="margin-right: 8px"></iron-icon>
+                  <span class="buttontext">{{item.name}}</span>
+                </paper-button>
+              </div>
+              <iron-collapse id$="collapse{{item.id}}" style="width:100%">
+                  
+                  <template is="dom-if" if="{{!arrayEmpty(item.images)}}">
+                    <div class="event-image">
+                      <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{item.images.0.url}}"></iron-image>
+                      
+                    </div>
+                  </template>
+
+                  
+
+                  <div class="event-text">
+                     
+                     <p style="white-space: pre-line">{{item.notes}}
+                     </p>
+                  </div>
+                  <div class="event-footer">
+                       <paper-button on-tap="handleEventComment">Comment</paper-button>
+
+                      
+
+                      <paper-dialog id="commentDialog{{item.id}}" modal="">
+                        <p>Comment text and instructions here</p>
+                        <form is="iron-form" id="form" method="post" action="{{getCommentURL()}}">
+                              <paper-input name="name" label="Name"></paper-input>
+                              <paper-input name="email" label="Email"></paper-input>
+                              <paper-input name="notes" label="Comment"></paper-input>
+                              <input type="hidden" name="commentedItemId" value="{{item.id}}">
+                              <paper-button dialog-dismiss="">Cancel</paper-button>
+                              <paper-button raised="" autofocus="" on-tap="submitForm">Submit</paper-button>
+                        </form>
+
+                        <div class="buttons">
+
+                        </div>
+                      </paper-dialog>
+
+                  </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+        </div>
+
+        
+        <div class="flexchild">
+          <div class="associationColumn">
+            <div class="associations" id$="associations{{item.id}}" style="display: none">
+              <div class="rightArrow">
+                <img src="/pictures/arrowRight.png" style="position: relative; top: 0; left: 0; margin: 12px">
+              </div>
+              <div class="flexchild">
+                <template is="dom-repeat" items="{{item.associatedItems}}" as="association">
+                  <paper-card>
+                    <div class="association">
+                      <div class="association-header" style="background-color: {{eventColour(item.type)}}">
+                        <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
+                          <iron-icon icon="{{item.type}}" style="margin-right: 8px"></iron-icon>
+                          {{association.name}}
+                        </paper-button>
+                      </div>
+                      <iron-collapse id$="associationCollapse{{association.id}}" style="width:100%">
+
+                          <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
+                            <div class="association-image">
+                              <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{item.images.0.url}}"></iron-image>
+
+                            </div>
+                          </template>
+
+                          <div class="association-text">
+                             
+                             <p>{{association.notes}}</p>
+                          </div>
+                      </iron-collapse>
+
+                    </div>
+                  </paper-card>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    
+
+    
+    <iron-ajax id="requestEvents" url="" handle-as="json" on-response="handleResponse">
+    </iron-ajax>
+
+  </template>
+
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEvents.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/events",this.$.requestEvents.generateRequest()},arrayEmpty:function(e){return 0==e.length},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},handleResponse:function(e){console.log(e.detail.response),this.events=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleEventCollapse:function(e,t,n){var a=e.model.item.id,s="#collapse"+a,o="#comment"+a,i="#associations"+a;this.$$(s).opened?(this.$$(o).style.display="none",this.$$(i).style.display="none"):(this.$$(o).style.display="flex",this.$$(i).style.display="flex"),this.$$(s).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.association.id,s="#associationCollapse"+a;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.item.id;console.log("open comment dialog for event : "+a);var s="#commentDialog"+a;this.$$(s).open()},submitForm:function(e){console.log("submit form function called"),Polymer.dom(e).localTarget.parentElement.submit()},eventColour:function(e){var t;switch(e){case"inauguration":t="#5677FC";break;case"establishing":t="#5677FC";break;case"appointment":case"appointing":t="#5677FC";break;case"awarding":t="#5677FC";break;case"name change":t="#5677FC";break;case"relocation":t="#5677FC";break;case"gathering":t="#7ED321";break;case"signing":t="#7ED321";break;case"founding":t="#FF9800";break;case"publishing":t="#EC407A";break;case"global event":t="#9B9B9B";break;default:t="#5677FC"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),s=a.substr(a.length-1);return"0"==s}});</script>
+
+</dom-module>
+</body></html>

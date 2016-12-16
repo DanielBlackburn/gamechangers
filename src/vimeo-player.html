@@ -1,0 +1,239 @@
+<!--
+based on https://github.com/kappuccino/vimeo-player/
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="vimeo-player">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .embed-container{
+        display: block;
+        position: relative;
+        padding-bottom: 56.25%;
+        overflow: hidden;
+        max-width: 100%;
+        height: auto !important;
+      }
+
+      .embed-container iframe,
+      .embed-container object,
+      .embed-container embed{
+        border: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      p{
+        text-align: center;
+      }
+
+    </style>
+
+    <div id="wrapper">
+      <iframe
+        src="[[_vimeoUrl]]"
+        width="[[width]]"
+        height="[[height]]"
+        frameborder="[[frameborder]]" webkitAllowFullScreen mozallowfullscreen allowfullscreen>
+      </iframe>
+      <p>[[_caption]]</p>
+    </div>
+
+    <iron-ajax id="vimeoAPI" auto
+               url="[[_vimeoAPIUrl]]"
+               handle-as="json"
+               on-response="handleResponse">
+    </iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: "vimeo-player",
+      /**
+       * Fired when the player get the response from Vimeo API
+       * @event vimeo-player-response
+       */
+
+      properties: {
+        /**
+         * The ID of the video. For exemple.
+         * @attribute videoid
+         * @type string
+         */
+        videoid: {
+          type: String,
+          value: '39189423'
+        },
+        /**
+         * An optional unique id for the player that will be passed back with all Javascript API responses.
+         * @attribute player_id
+         * @type string
+         */
+        player_id: {
+          type: String,
+          value: ''
+        },
+        /**
+         * Show the user’s portrait on the video.
+         * @attribute portrait
+         * @type number
+         * @default 1
+         */
+        portrait: {
+          type: Number,
+          value: 0
+        },
+        /**
+         * Specify the color of the video controls. Defaults to 00adef.
+         * @attribute color
+         * @type number
+         * @default 0
+         */
+        color: {
+          type: String,
+          value: '00adef'
+        },
+        /**
+         * Play the video automatically. Defaults to 0.
+         * @attribute autoplay
+         * @type number
+         * @default 0
+         */
+        autoplay: {
+          type: Number,
+          value: 0
+        },
+        /**
+         * Define if the player loops or not
+         * @attribute loop
+         * @type number
+         * @default 0
+         */
+        loop: {
+          type: Number,
+          value: 0
+        },
+        /**
+         * Display the title of the video or not.
+         * @attribute title
+         * @type number
+         */
+        title: {
+          type: String,
+          value: ''
+        },
+        /**
+         * Show the user’s byline on the video.
+         * @attribute byline
+         * @type number
+         */
+        byline: {
+          type: String,
+          value: ''
+        },
+        /**
+         *
+         * @attribute api
+         * @type number
+         */
+        api: {
+          type: String,
+          value: ''
+        },
+        /**
+         * The Width value of the iframe, if `responsive` is on the value will not be used
+         * @attribute width
+         * @type number
+         * @default 550
+         */
+        width: {
+          type: String,
+          value: ''
+        },
+        /**
+         * The Height value of the iframe, if `responsive` is on the value will not be used
+         * @attribute height
+         * @type number
+         * @default 300
+         */
+        height: {
+          type: String,
+          value: ''
+        },
+        /**
+         * Control the border width of the frame
+         * @attribute frameborder
+         * @type number
+         * @default 0
+         */
+        frameborder: {
+          type: Number,
+          value: 0
+        },
+        /**
+         * The caption displayed below the video
+         *
+         * @attribute caption
+         * @type string
+         */
+        caption: {
+          type: String,
+          value: ''
+        },
+
+        _vimeoUrl: {
+          type: String,
+          // NOTE: these arguments correlate to the _computedVimeoUrl function intake EXACTLY. do not change the order
+          computed: '_computedVimeoUrl(videoid, portrait, color, title, byline, autoplay, loop, api, player_id)'
+        },
+
+        _vimeoAPIUrl: {
+          type: String,
+          computed: '_computedVimeoAPIUrl(videoid)'
+        }
+      },
+
+      _computedVimeoUrl: function(){
+        //console.log("calculate URL");
+        var args = Array.prototype.slice.call(arguments),
+          attrs = ['portrait','color','title','byline','autoplay','loop','api','player_id']
+        url = "//player.vimeo.com/video/"
+        url += args.shift()
+        url += "?"
+
+        args.map(function(property, i){
+          url += attrs[i]+"="+property+"&"
+        })
+        return url
+      },
+
+      _computedVimeoAPIUrl: function( videoid ){
+        return "http://vimeo.com/api/v2/video/"+videoid+".json"
+      },
+
+      ready: function(){
+        //console.log("ready");
+        this.$.wrapper.className = 'embed-container'
+      },
+
+      handleResponse: function(event, data, raw){
+        //console.log("handle response");
+        data = data.response
+        if( !data || (data.length < 1) || !data[0] ){
+          return
+        }
+        this.fire('vimeo-player-response', {data: data[0]})
+      }
+    })
+  </script>
+</dom-module>
