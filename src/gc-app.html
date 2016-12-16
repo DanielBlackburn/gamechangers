@@ -252,6 +252,7 @@
       },
       // When ready call API to get all event data
       ready: function(){
+        document.domain = 'aalto.fi';
         this.$.requestEvents.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/events";
         this.$.requestEvents.generateRequest();
       },
