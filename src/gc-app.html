@@ -333,9 +333,11 @@
         form.addEventListener('iron-form-presubmit', function() {
           console.log("pre-submit form function called");
           this.request.method = 'PUT';
-          this.request.url = 'http://localhost:8080/gamechangers/v1/comment';
+          //this.request.url = 'http://localhost:8080/gamechangers/v1/comment';
+          this.request.url =  'https://deepamehta.aalto.fi/gamechangers/v1/comment';
           this.request.handleAs = 'json';
           //console.log("name : " + this.getAttribute('id') );
+          console.log("this comment domain : " + this.domain);
           console.log(this.serialize());
         });
 
@@ -398,7 +400,7 @@
               break;
 
           default:
-              c = "#5677FC";
+              c = "#9B9B9B";
         }
         return c;
       },
