@@ -103,7 +103,7 @@
         
         <div class="flexchild">
           <paper-card>
-            <div class="event">
+            <div class="event" id="event">
               <div class="event-header" style$="background-color: [[eventColour(item.type)]];">
                 <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
                   <iron-icon icon="{{item.type}}" style="margin-right: 8px"></iron-icon>
@@ -131,20 +131,21 @@
 
                       
 
-                      <paper-dialog id="commentDialog{{item.id}}" modal="">
-                        <p>Comment text and instructions here</p>
-                        <form is="iron-form" id="form{{item.id}}" method="post" content-type="application/json" action="{{getCommentURL()}}">
-                              <paper-input name="name" label="Name"></paper-input>
-                              <paper-input name="email" label="Email"></paper-input>
-                              <paper-input name="notes" label="Comment"></paper-input>
-                              <input type="hidden" name="commentedItemId" value="{{item.id}}">
+                      <paper-dialog id="commentDialog[[item.id]]" modal="">
+                        <p>Please enter your name, email and comment below.</p>
+                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}">
+                              <paper-input name="name" label="Name" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
+                              <paper-input name="email" label="Email" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
+                              <paper-input name="notes" label="Comment" char-counter="" maxlength="160" auto-validate="" error-message="Please enter a comment"></paper-input>
+                              <input type="hidden" name="commentedItemId" value="[[item.id]]">
+                              <br>
                               <paper-button dialog-dismiss="">Cancel</paper-button>
-                              <paper-button raised="" autofocus="" on-tap="submitForm(event)">Submit</paper-button>
+                              <paper-button raised="" autofocus="" on-tap="submitForm">Submit</paper-button>
                         </form>
-
                         <div class="buttons">
 
                         </div>
+
                       </paper-dialog>
 
                   </div>
@@ -204,7 +205,7 @@
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEvents.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/events",this.$.requestEvents.generateRequest()},arrayEmpty:function(e){return 0==e.length},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},handleResponse:function(e){console.log(e.detail.response),this.events=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleEventCollapse:function(e,t,n){var a=e.model.item.id,o="#collapse"+a,s="#comment"+a,i="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(i).style.display="none"):(this.$$(s).style.display="flex",this.$$(i).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.item.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.item.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},submitForm:function(e){var t=Polymer.dom(e).localTarget.parentElement;console.log("1 "+t.getAttribute("name")),console.log("2"),console.log("submit form function called : "+Polymer.dom(e).localTarget.parentElement.getAttribute("name")),Polymer.dom(e).localTarget.parentElement.submit()},eventColour:function(e){var t;switch(e){case"inauguration":t="#5677FC";break;case"establishing":t="#5677FC";break;case"appointment":case"appointing":t="#5677FC";break;case"awarding":t="#5677FC";break;case"name change":t="#5677FC";break;case"relocation":t="#5677FC";break;case"gathering":t="#7ED321";break;case"signing":t="#7ED321";break;case"founding":t="#FF9800";break;case"publishing":t="#EC407A";break;case"global event":t="#9B9B9B";break;default:t="#5677FC"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){document.domain="localhost",this.$.requestEvents.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/events",this.$.requestEvents.generateRequest()},arrayEmpty:function(e){return 0==e.length},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},handleResponse:function(e){console.log(e.detail.response),this.events=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleEventCollapse:function(e,t,n){var a=e.model.item.id,s="#collapse"+a,o="#comment"+a,i="#associations"+a;this.$$(s).opened?(this.$$(o).style.display="none",this.$$(i).style.display="none"):(this.$$(o).style.display="flex",this.$$(i).style.display="flex"),this.$$(s).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.item.id,s=e.model.association.id,o="#associationCollapse"+a+s;this.$$(o).toggle()},handleEventComment:function(e,t,n){var a=e.model.item.id;console.log("open comment dialog for event : "+a);var s="#commentDialog"+a;this.$$(s).open()},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){console.log("pre-submit form function called"),this.request.method="PUT",this.request.url="http://localhost:8080/gamechangers/v1/comment",this.request.handleAs="json",console.log(this.serialize())}),t.addEventListener("iron-form-submit",function(e){console.log(JSON.stringify(e.detail))}),console.log("submit form function called : "),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#5677FC"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),s=a.substr(a.length-1);return"0"==s}});</script>
 
 </dom-module>
 </body></html>
