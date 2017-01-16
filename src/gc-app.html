@@ -11,12 +11,15 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <!-- Community elements-->
 <link rel="import" href="../bower_components/parallax-container/parallax-container.html">
+<link rel="import" href="vimeo-player.html">
+<link rel="import" href="image-slider.html">
 <!-- Project elements-->
 <link rel="import" href="gc-icons.html">
 <link rel="import" href="gc-styles.html">
-<link rel="import" href="vimeo-player.html">
+
 
 <dom-module id="gc-app">
   <template>
@@ -28,6 +31,31 @@
         display: block;
         padding: 0px;
         overflow: hidden;
+
+        iron-image {
+          --iron-image-width: 100%;
+        }
+      }
+    </style>
+    <style is="custom-style">
+      paper-dialog.carousel-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 70px;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      .closeButton {
+          position: absolute;
+          top: 0;
+          left: auto;
+          right: 0;
+          bottom: auto;
       }
     </style>
 
@@ -41,26 +69,32 @@
       </div>
       <div class="flexchild">
         <img src="/pictures/title.png" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
-        <p class="info" >CLOSED ALPHA - VERSION</p>
-        <div style="height: 1px; background-color: #F8E81C;"></div>
 
           <div class="container flex-horizontal">
             <div class="flexchild">
-              <h1 style="color: #F8E81C; font-size: 64px;">Dear Alpha,</h1>
-              <p class="info">You are among select few who are given early access for Aalto Gamechangers website. We are gathering a timeline of events from the history of Aalto University and its predecessor schools, that has
-      had an impact for the Finnish society. We ask you to browse through the  preliminary content, comment with an anecdote or a insight relating to them or propose a new thing with a year that you think should be included. Please remember that the perspective here is “gamechanger”, so we are looking for things that had enabled lot of other things and fundamentelly multidiciplinary. Thank you.</p>
+              <h1 class="info">Welcome!</h1>
+              <p class="info">This is a timeline of events from the history of Aalto University and its predecessor schools, that has had an impact for the Finnish society. Here are some historical milestones together with a few impactful chain of events, but this is just a start. Now  we reach out to the community. That is you. Share your insight.</p>
+              </br>
+              <p class="info">Scroll down the time and suggest a topic you think should be included. Please remember that the perspective here is “a game changer”, so we are looking for themes that have been enablers for disruptions. You can also suggest an anecdote directly regarding an event on the timeline. Thank you for your help.</p>
               </div>
             <div class="flexchild">
-              <p></p>
+              <!-- Change this to be data driven, get latest video from the API -->
+              <h1 class="info">Video of the month</h1>
+              <vimeo-player id="videoOfTheMonth" videoid="39189423"></vimeo-player>
+              <p class="info">Video Title</p>
+              <p class="info">Video Description</p>
             </div>
           </div>
+
       </div>
     </div>
 
     <!-- Timeline template -->
     <template is="dom-repeat" items="{{events}}" sort="sortEvents">
 
-      <div class="container flex-horizontal">
+    <!--  <div class="{{item.type}}"> -->
+      <div class="campus">
+        <div class="container flex-horizontal">
 
         <!-- Column 1 - the year/decade -->
         <div class="year">
@@ -73,7 +107,7 @@
         </div>
 
         <!-- Column 2 - comments -->
-        <div class="flexchild">
+        <!-- <div class="flexchild"> -->
           <div class="commentColumn">
             <div class="comment" id$="comment{{item.id}}" style="display: none;">
               <div class="flexchild">
@@ -99,7 +133,7 @@
               </div>
             </div>
           </div>
-        </div>
+        <!-- </div> -->
 
         <!-- Column 3 - events -->
         <div class="flexchild">
@@ -117,6 +151,19 @@
                     <div class="event-image">
                       <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[item.images.0.url]]"></iron-image>
                       <!-- ADD definitiion of Modal to show all images here and icon button to show the modal -->
+
+                      <paper-button on-tap="handleEventCarousel">Full screen</paper-button>
+
+                      <paper-dialog id="carouselDialog[[item.id]]" class="carousel-dialog" modal>
+
+
+
+                        <image-slider images="{{formatImageArray(item.images)}}" captions="{{formatCaptionArray(item.images)}}"></image-slider>
+                        <!-- <div class="buttons"> -->
+                          <paper-button class="closeButton" dialog-confirm autofocus>close</paper-button>
+                        <!-- </div> -->
+                      </paper-dialog>
+
                     </div>
                   </template>
 
@@ -138,7 +185,7 @@
 
                       <paper-dialog id="commentDialog[[item.id]]" modal>
                         <p>Please enter your name, email and comment below.</p>
-                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}">
+                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
                               <paper-input name="name" label="Name" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
                               <paper-input name="email" label="Email" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
                               <paper-input name="notes" label="Comment" char-counter maxlength="160" auto-validate error-message="Please enter a comment"></paper-input>
@@ -180,7 +227,7 @@
 
                           <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
                             <div class="association-image">
-                              <iron-image style="width: 100%; height: 240px;" sizing="cover" src="{{item.images.0.url}}"></iron-image>
+                              <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
 
                             </div>
                           </template>
@@ -199,8 +246,21 @@
           </div>
         </div>
 
+        </div>
       </div>
+
+
+
     </template>
+
+    <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
+    <paper-toast id="toastFilters" duration="0" text="Filters ">
+      <paper-icon-button icon="1_1 admin" title="Admin" on-tap="handleFilter" data-args="1_1 admin"></paper-icon-button>
+      <paper-icon-button icon="1_2 campus" title="Campus" on-tap="handleFilter" data-args="1_2 campus"></paper-icon-button>
+      <paper-icon-button icon="1_3 students" title="Students" on-tap="handleFilter" data-args="1_3 students"></paper-icon-button>
+      <paper-icon-button icon="1_4 teaching" title="Teaching" on-tap="handleFilter" data-args="1_4 teaching"></paper-icon-button>
+      <paper-icon-button icon="2_1 art and design" title="Art and design" on-tap="handleFilter" data-args="2_1 art and design"></paper-icon-button>
+    </paper-toast>
 
     <!--    </parallax-container> -->
 
@@ -209,7 +269,7 @@
       id="requestEvents"
       url=""
       handle-as="json"
-      on-response="handleResponse">
+      on-response="handleResponseEvents">
     </iron-ajax>
 
   </template>
@@ -223,7 +283,7 @@
         * Domain for API calls.
         * @attribute domain
         * @type string
-        * @default http://localhost:8080
+        * @default https://deepamehta.aalto.fi
         */
         domain: {
           type: String,
@@ -253,18 +313,35 @@
       },
       // When ready call API to get all event data
       ready: function(){
-        //document.domain = 'aalto.fi'; // NOTE: test if this is needed once deployed or not?
-        //document.domain = 'localhost';
+        // call function to get video first, display this then get events
         this.$.requestEvents.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/events";
         this.$.requestEvents.generateRequest();
 
+        // open the filters toast
+        //this.$.toastFilters.open();
+
         // test code
         //this.$.bottom.scrollIntoView();
-
       },
       // Function to check if an array is empty
       arrayEmpty: function(array) {
         return array.length == 0;
+      },
+      // Format the image array for image-slider, just urls, no captions
+      formatImageArray: function(array) {
+        var imageArray = [];
+        for (var i = 0; i < array.length; i++) {
+          imageArray[i] = array[i].url;
+        }
+        return imageArray;
+      },
+      // Format the captions array for image-slider, just captions, no urls
+      formatCaptionArray: function(array) {
+        var captionArray = [];
+        for (var i = 0; i < array.length; i++) {
+          captionArray[i] = array[i].caption;
+        }
+        return captionArray;
       },
       // Strip HTML tags, specifically img tags from notes
       justText: function(htmlContent) {
@@ -280,15 +357,31 @@
       },
       getCommentURL: function() {
         //return "http://localhost:8080/gamechangers/v1/comment";
+        console.log("domain in getCommentURL : " + this.domain);
         return this.domain + "/gamechangers/v1/comment";
       },
       // Handles data being returned from the API call to get events
-      handleResponse: function (data) {
+      handleResponseEvents: function (data) {
           console.log(data.detail.response);
           this.events = data.detail.response;
       },
+      // Event sorting fucntion
       sortEvents: function (a, b) {
           return parseFloat(b.from) - parseFloat(a.from);
+      },
+      // Toggle event cards visibility based on event types
+      handleFilter: function(e) {
+        console.log("args : " + e.target.dataset.args);
+        var filter = e.target.dataset.args;
+        //this.$.filter.toggle();
+        if (filter == "1_1 admin") {
+          console.log("hide");
+          this.$.info.hidden = true;
+        } else {
+          console.log("show");
+          this.$.info.hidden = false;
+        }
+
       },
       // Toggle event card collapse on tap based on ID
       handleEventCollapse: function(event, detail, sender) {
@@ -315,38 +408,51 @@
       },
       handleEventComment: function(event, detail, sender) {
         //console.log("comment tap event");
-        // add comment ajax call
         var id = event.model.item.id;
         console.log("open comment dialog for event : " + id);
         var dialog = '#commentDialog' + id;
         this.$$(dialog).open();
       },
+      // Open carousel dialog when full screen button is tapped
+      handleEventCarousel: function(event, detail, sender) {
+        console.log("full screen tap event");
+        var id = event.model.item.id;
+        console.log("open image carousel dialog for event : " + id);
+        var dialog = '#carouselDialog' + id;
+        this.$$(dialog).open();
+      },
+      // Handle response from API after comment, display message close dialog on success.
+      handleResponseComment: function (data) {
+        var id = event.model.item.id;
+        console.log("close comment dialog for event : " + id);
+        console.log("comment response : " + JSON.stringify(data.detail.response));
+        console.log("comment response id " + data.detail.response.id);
+
+        var dialog = '#commentDialog' + id;
+        this.$$(dialog).close();
+        alert ("Comment submitted. Thank you.");
+      },
       // function used to submit forms (comment/propose) with paper-button
       submitForm: function(event) {
-
         var form = event.target.parentElement;
-
         //console.log("1 " + event.target.parentElement , typeof(event.target.parentElement)); //));
-
         // work around to change method to PUT before submitting
-
         form.addEventListener('iron-form-presubmit', function() {
-          console.log("pre-submit form function called");
+          //console.log("pre-submit form function called");
           this.request.method = 'PUT';
-          //this.request.url = 'http://localhost:8080/gamechangers/v1/comment';
           this.request.url =  'https://deepamehta.aalto.fi/gamechangers/v1/comment';
           this.request.handleAs = 'json';
-          //console.log("name : " + this.getAttribute('id') );
-          console.log("this comment domain : " + this.domain);
-          console.log(this.serialize());
+          //console.log(this.serialize());
         });
-
-        form.addEventListener('iron-form-submit', function(event) {
-          console.log (JSON.stringify(event.detail));
+        //form.addEventListener('iron-form-submit', function(event) {
+          //console.log("submit form function called");
+          //console.log (JSON.stringify(event.detail));
+        //});
+        form.addEventListener('iron-form-error', function(event) {
+          //console.log("comment form error response");
+          alert ("Comment failed. Please make sure you entered your name, a comment and a valid email then try again");
         });
-
-        console.log("submit form function called : ") ;
-        //console.log(form, typeof(form));
+        //console.log("submit form function called : ") ;
         form.submit();
       },
       // return the colour based on suplied event type

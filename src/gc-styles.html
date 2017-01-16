@@ -9,26 +9,28 @@
 
       .info {
         font-family: 'Roboto Condensed', sans-serif;
-        color: #F8E81C;
+        color: #FFF;
         font-weight: normal;
       }
 
       h1.info {
-         font-size: 64px;
+         font-family: 'Roboto Condensed', sans-serif;
+         font-size: 26px;
+         font-weight: normal;
          margin: 10px 0px;
-      }
-
-      h2.info {
-         font-size: 24px;
-         font-weight: bold;
-         margin: 0;
+         color: #FFF;
       }
 
       p.info {
-         font-size: 24px;
-         margin: 0;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 18px;
+        font-weight: normal;
+         margin: 0px 80px 0px 0px;
       }
 
+      #videoOfTheMonth {
+        margin-right: 50px;
+      }
       h1 {
         margin: 12px 0;
         color: #212121;
@@ -64,10 +66,11 @@
         @apply(--layout-flex-3);
       }
       .year {
-          width: 180px;
-          min-width: 180px;
+          width: 70px;
+          min-width: 70px;
+          max-width: 70px;
           color: #fff;
-          margin: 2px 20px 2px 25px;
+          margin: 2px 2px 2px 25px;
           padding: 0;
           font-size: 22px;
       }
@@ -81,7 +84,7 @@
       }
 
       .event {
-          min-width: 340px;
+          min-width: 270px;
           overflow: hidden;
       }
 
@@ -94,7 +97,7 @@
       }
 
       .buttontext {
-        width:280px;
+        width:260px;
         overflow: hidden;
         white-space: nowrap;
         display: block;
@@ -142,8 +145,8 @@
       }
 
       .association {
-          min-width: 340px;
           overflow: hidden;
+          min-width: 270px;
       }
 
       .association-header {
@@ -185,7 +188,9 @@
 
       .commentColumn {
         @apply(--layout-horizontal);
-        min-width: 360px;
+        width: 240px;
+        min-width: 240px;
+        max-width: 240px;
       }
 
       .comment {
