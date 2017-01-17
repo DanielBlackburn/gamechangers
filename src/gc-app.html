@@ -108,7 +108,7 @@
     <!-- Spinner - hidden after data has loaded
     <paper-spinner-lite class="orange" active></paper-spinner-lite>
     -->
-    
+
     <!-- Timeline template -->
     <template is="dom-repeat" items="{{events}}" sort="sortEvents">
 
@@ -172,7 +172,7 @@
                       <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[item.images.0.url]]"></iron-image>
                       <!-- ADD definitiion of Modal to show all images here and icon button to show the modal -->
 
-                      <paper-icon-button src="/icons/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                      <paper-icon-button src="/pictures/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
 
                       <paper-dialog id="carouselDialog[[item.id]]" class="carousel-dialog" modal>
 
