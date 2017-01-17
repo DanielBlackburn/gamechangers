@@ -153,7 +153,7 @@
             <div class="event" id="event">
               <div class="event-header" style$="background-color: [[eventColour(item.type)]];">
                 <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                  <iron-icon src="/icons/{{item.type}}.svg" style="margin-right: 8px"></iron-icon>
+                  <iron-icon src="/pictures/{{item.type}}.svg" style="margin-right: 8px"></iron-icon>
                   <span class="buttontext">{{item.name}}</span>
                 </paper-button>
               </div>
@@ -172,7 +172,7 @@
 
                         <image-slider images="{{formatImageArray(item.images)}}" captions="{{formatCaptionArray(item.images)}}"></image-slider>
                         
-                          <paper-icon-button class="closeButton" src="/icons/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
+                          <paper-icon-button class="closeButton" src="/pictures/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
                         
                       </paper-dialog>
 
@@ -228,7 +228,7 @@
                       <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
                         <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
                           
-                          <iron-icon src="/icons/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
+                          <iron-icon src="/pictures/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
                           <span class="buttontext">{{association.name}}</span>
                         </paper-button>
                       </div>
