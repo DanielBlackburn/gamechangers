@@ -10,12 +10,16 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../bower_components/parallax-container/parallax-container.html">
+<link rel="import" href="vimeo-player.html">
+<link rel="import" href="image-slider.html">
 
 <link rel="import" href="gc-icons.html">
 <link rel="import" href="gc-styles.html">
-<link rel="import" href="vimeo-player.html">
+
 
 </head><body><dom-module id="gc-app">
   <template>
@@ -27,7 +31,39 @@
         display: block;
         padding: 0px;
         overflow: hidden;
+
+        iron-image {
+          --iron-image-width: 100%;
+        }
       }
+    </style>
+    <style is="custom-style">
+      paper-dialog.carousel-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 50px;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      .closeButton {
+          position: absolute;
+          top: 0;
+          left: auto;
+          right: 0;
+          bottom: auto;
+          background-color: var(--paper-grey-300);
+          opacity: 0.75;
+          color: var(--paper-grey-700);
+          border-radius: 20px;
+          margin: 10px;
+          color: #fff;
+      }
+
     </style>
 
 
@@ -39,27 +75,38 @@
         <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px">
       </div>
       <div class="flexchild">
-        <img src="/pictures/title.png" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px">
-        <p class="info">CLOSED ALPHA - VERSION</p>
-        <div style="height: 1px; background-color: #F8E81C"></div>
+        <img src="/pictures/title_FIN.png" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px">
 
           <div class="container flex-horizontal">
             <div class="flexchild">
-              <h1 style="color: #F8E81C; font-size: 64px">Dear Alpha,</h1>
-              <p class="info">You are among select few who are given early access for Aalto Gamechangers website. We are gathering a timeline of events from the history of Aalto University and its predecessor schools, that has
-      had an impact for the Finnish society. We ask you to browse through the  preliminary content, comment with an anecdote or a insight relating to them or propose a new thing with a year that you think should be included. Please remember that the perspective here is “gamechanger”, so we are looking for things that had enabled lot of other things and fundamentelly multidiciplinary. Thank you.</p>
-              </div>
+              
+              <h1 class="info">Tervetuloa!</h1>
+              <p class="info">Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen.</p>
+              <br>
+              <p class="info">Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jakaaksesi ajatuksesi liiku aikajanalla haluamaasi vuoteen ja ehdota lisättäväksi aihetta ja taustatietoja. Voit myös kirjoittaa kommenttikenttään anekdootteja jo kuvatuista aiheista. Odotamme panostasi, suurkiitos siitä etukäteen!</p>
+
+            </div>
+
             <div class="flexchild">
-              <p></p>
+              
+              <h1 class="info">Video of the month</h1>
+              <vimeo-player id="videoOfTheMonth" videoid="39189423"></vimeo-player>
+              <p class="info">Video Title</p>
+              <p class="info">Video Description</p>
             </div>
           </div>
+
       </div>
     </div>
 
     
+    
+    
     <template is="dom-repeat" items="{{events}}" sort="sortEvents">
 
-      <div class="container flex-horizontal">
+    
+      <div class="campus">
+        <div class="container flex-horizontal">
 
         
         <div class="year">
@@ -72,7 +119,7 @@
         </div>
 
         
-        <div class="flexchild">
+        
           <div class="commentColumn">
             <div class="comment" id$="comment{{item.id}}" style="display: none">
               <div class="flexchild">
@@ -85,7 +132,7 @@
 
                     <div class="comment-text">
                       <template is="dom-repeat" items="{{item.latestPublicComments}}" as="comment">
-                        <p style="font-size: 18px">{{comment.notes}}</p>
+                        <p>{{comment.notes}}</p>
                         <p style="font-size: 11px">{{comment.name}}</p>
                       </template>
                     </div>
@@ -98,7 +145,7 @@
               </div>
             </div>
           </div>
-        </div>
+        
 
         
         <div class="flexchild">
@@ -106,7 +153,7 @@
             <div class="event" id="event">
               <div class="event-header" style$="background-color: [[eventColour(item.type)]];">
                 <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                  <iron-icon icon="{{item.type}}" style="margin-right: 8px"></iron-icon>
+                  <iron-icon src="/icons/{{item.type}}.svg" style="margin-right: 8px"></iron-icon>
                   <span class="buttontext">{{item.name}}</span>
                 </paper-button>
               </div>
@@ -116,6 +163,19 @@
                     <div class="event-image">
                       <iron-image style="width: 100%; height: 240px" sizing="cover" src="[[item.images.0.url]]"></iron-image>
                       
+
+                      <paper-icon-button src="/icons/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+
+                      <paper-dialog id="carouselDialog[[item.id]]" class="carousel-dialog" modal="">
+
+
+
+                        <image-slider images="{{formatImageArray(item.images)}}" captions="{{formatCaptionArray(item.images)}}"></image-slider>
+                        
+                          <paper-icon-button class="closeButton" src="/icons/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
+                        
+                      </paper-dialog>
+
                     </div>
                   </template>
 
@@ -133,7 +193,7 @@
 
                       <paper-dialog id="commentDialog[[item.id]]" modal="">
                         <p>Please enter your name, email and comment below.</p>
-                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}">
+                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
                               <paper-input name="name" label="Name" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
                               <paper-input name="email" label="Email" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
                               <paper-input name="notes" label="Comment" char-counter="" maxlength="160" auto-validate="" error-message="Please enter a comment"></paper-input>
@@ -167,7 +227,8 @@
                     <div class="association">
                       <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
                         <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                          <iron-icon icon="{{item.type}}" style="margin-right: 8px"></iron-icon>
+                          
+                          <iron-icon src="/icons/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
                           <span class="buttontext">{{association.name}}</span>
                         </paper-button>
                       </div>
@@ -175,7 +236,7 @@
 
                           <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
                             <div class="association-image">
-                              <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{item.images.0.url}}"></iron-image>
+                              <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
 
                             </div>
                           </template>
@@ -194,18 +255,31 @@
           </div>
         </div>
 
+        </div>
       </div>
+
+
+
     </template>
 
     
+    <paper-toast id="toastFilters" duration="0" text="Filters ">
+      <paper-icon-button icon="1_1 admin" title="Admin" on-tap="handleFilter" data-args="1_1 admin"></paper-icon-button>
+      <paper-icon-button icon="1_2 campus" title="Campus" on-tap="handleFilter" data-args="1_2 campus"></paper-icon-button>
+      <paper-icon-button icon="1_3 students" title="Students" on-tap="handleFilter" data-args="1_3 students"></paper-icon-button>
+      <paper-icon-button icon="1_4 teaching" title="Teaching" on-tap="handleFilter" data-args="1_4 teaching"></paper-icon-button>
+      <paper-icon-button icon="2_1 art and design" title="Art and design" on-tap="handleFilter" data-args="2_1 art and design"></paper-icon-button>
+    </paper-toast>
 
     
-    <iron-ajax id="requestEvents" url="" handle-as="json" on-response="handleResponse">
+
+    
+    <iron-ajax id="requestEvents" url="" handle-as="json" on-response="handleResponseEvents">
     </iron-ajax>
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEvents.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/events",this.$.requestEvents.generateRequest()},arrayEmpty:function(e){return 0==e.length},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},handleResponse:function(e){console.log(e.detail.response),this.events=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleEventCollapse:function(e,t,n){var a=e.model.item.id,s="#collapse"+a,o="#comment"+a,i="#associations"+a;this.$$(s).opened?(this.$$(o).style.display="none",this.$$(i).style.display="none"):(this.$$(o).style.display="flex",this.$$(i).style.display="flex"),this.$$(s).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.item.id,s=e.model.association.id,o="#associationCollapse"+a+s;this.$$(o).toggle()},handleEventComment:function(e,t,n){var a=e.model.item.id;console.log("open comment dialog for event : "+a);var s="#commentDialog"+a;this.$$(s).open()},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){console.log("pre-submit form function called"),this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json",console.log("this comment domain : "+this.domain),console.log(this.serialize())}),t.addEventListener("iron-form-submit",function(e){console.log(JSON.stringify(e.detail))}),console.log("submit form function called : "),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),s=a.substr(a.length-1);return"0"==s}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEvents.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/events",this.$.requestEvents.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){console.log("args : "+e.target.dataset.args);var t=e.target.dataset.args;"1_1 admin"==t?(console.log("hide"),this.$.info.hidden=!0):(console.log("show"),this.$.info.hidden=!1)},handleEventCollapse:function(e,t,n){var a=e.model.item.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.item.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.item.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.item.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.item.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
 
 </dom-module>
 </body></html>
