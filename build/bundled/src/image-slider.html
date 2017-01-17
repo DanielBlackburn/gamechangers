@@ -1,0 +1,85 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
+
+</head><body><dom-module id="image-slider">
+  <template>
+
+    <style is="custom-style">
+      .outer {
+        position: relative;
+        width: 100%;
+        height: : 100%;
+
+        background-color: #000;
+        font-family: 'Roboto Condensed', sans-serif;
+        color: #fff;
+        font-weight: normal;
+      }
+
+      iron-image {
+        position: relative;
+        width: 100%;
+        height: 70vh;
+      }
+
+      footer {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+
+      p {
+        font-size: 16px;
+        margin: 10px 70px 10px 70px;
+        text-align: center;
+      }
+
+      paper-icon-button.round {
+
+        background-color: var(--paper-grey-300);
+        opacity: 0.75;
+        color: var(--paper-grey-700);
+        border-radius: 20px;
+        padding: 2px;
+        margin: 10px;
+        top: 50%;
+      }
+
+      .flex-horizontal {
+        @apply(--layout-horizontal);
+      }
+      .flexchild {
+        @apply(--layout-flex);
+      }
+
+    </style>
+
+    
+
+      <div class="outer">
+        <div class="container flex-horizontal">
+          <div class="leftButton">
+              <paper-icon-button src="/icons/chevron_left.svg" on-tap="prev" class="round"></paper-icon-button>
+          </div>
+          <div class="flexchild">
+            <iron-image id="image" src="{{_arrayItem(images.*, currentPos)}}" title$="{{_arrayItem(images.*, currentPos)}}" sizing="contain" on-track="_handleTrack"></iron-image>
+          </div>
+          <div class="rightButton">
+              <paper-icon-button src="/icons/chevron_right.svg" on-tap="next" class="round"></paper-icon-button>
+          </div>
+        </div>
+        <div class="footer">
+          <p> {{_arrayItem(captions.*, currentPos)}} </p>
+        </div>
+      </div>
+  
+
+  </template>
+
+  <script>Polymer({is:"image-slider",properties:{images:{type:Array,value:[],reflectToAttribute:!0,observer:"_onImagesChanged"},captions:{type:Array,value:[],reflectToAttribute:!0},currentPos:{type:Number,value:0,readonly:!0,observer:"_onCurrentPosChanged"},noBullets:{type:Boolean,value:!0},_imgsWithClass:{type:Array,value:[],readonly:!0}},prev:function(){this.currentPos>0?this.currentPos=this.currentPos-1:this.currentPos=this.images.length-1},next:function(){this.currentPos<this.images.length-1?this.currentPos=this.currentPos+1:this.currentPos=0},_handleTrack:function(t){switch(t.detail.state){case"end":t.detail.dx>100?this.prev():t.detail.dx<-100&&this.next()}},_changePos:function(t){this.currentPos=t.target.getAttribute("data-index")},_arrayItem:function(t,e){return t.base[e]},_onImagesChanged:function(){0==this.images.length?this.hidden=!0:(0==this.currentPos&&this._onCurrentPosChanged(),this.currentPos=0,this.hidden=!1)},_onCurrentPosChanged:function(){var t=this.currentPos;this._imgsWithClass=this.images.map(function(e,r){return{image:e,class:r==t?"active":""}})}});</script>
+</dom-module>
+</body></html>
