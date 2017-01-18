@@ -21,6 +21,7 @@
 
 
 
+
 </head><body><div hidden="" by-vulcanize=""><script>!function(){function e(){document.body.removeAttribute("unresolved")}window.WebComponents?addEventListener("WebComponentsReady",e):"interactive"===document.readyState||"complete"===document.readyState?e():addEventListener("DOMContentLoaded",e)}(),window.Polymer={Settings:function(){var e=window.Polymer||{};if(!e.noUrlSettings)for(var t,r=location.search.slice(1).split("&"),i=0;i<r.length&&(t=r[i]);i++)t=t.split("="),t[0]&&(e[t[0]]=t[1]||!0);return e.wantShadow="shadow"===e.dom,e.hasShadow=Boolean(Element.prototype.createShadowRoot),e.nativeShadow=e.hasShadow&&!window.ShadowDOMPolyfill,e.useShadow=e.wantShadow&&e.hasShadow,e.hasNativeImports=Boolean("import"in document.createElement("link")),e.useNativeImports=e.hasNativeImports,e.useNativeCustomElements=!window.CustomElements||window.CustomElements.useNative,e.useNativeShadow=e.useShadow&&e.nativeShadow,e.usePolyfillProto=!e.useNativeCustomElements&&!Object.__proto__,e.hasNativeCSSProperties=!navigator.userAgent.match("AppleWebKit/601")&&window.CSS&&CSS.supports&&CSS.supports("box-shadow","0 0 0 var(--foo)"),e.useNativeCSSProperties=e.hasNativeCSSProperties&&e.lazyRegister&&e.useNativeCSSProperties,e.isIE=navigator.userAgent.match("Trident"),e}()},function(){var e=window.Polymer;window.Polymer=function(e){"function"==typeof e&&(e=e.prototype),e||(e={});var r=t(e);e=r.prototype;var i={prototype:e};return e.extends&&(i.extends=e.extends),Polymer.telemetry._registrate(e),document.registerElement(e.is,i),r};var t=function(e){var t=Polymer.Base;return e.extends&&(t=Polymer.Base._getExtendedPrototype(e.extends)),e=Polymer.Base.chainObject(e,t),e.registerCallback(),e.constructor};if(e)for(var r in e)Polymer[r]=e[r];Polymer.Class=t}(),Polymer.telemetry={registrations:[],_regLog:function(e){console.log("["+e.is+"]: registered")},_registrate:function(e){this.registrations.push(e),Polymer.log&&this._regLog(e)},dumpRegistrations:function(){this.registrations.forEach(this._regLog)}},Object.defineProperty(window,"currentImport",{enumerable:!0,configurable:!0,get:function(){return(document._currentScript||document.currentScript||{}).ownerDocument}}),Polymer.RenderStatus={_ready:!1,_callbacks:[],whenReady:function(e){this._ready?e():this._callbacks.push(e)},_makeReady:function(){this._ready=!0;for(var e=0;e<this._callbacks.length;e++)this._callbacks[e]();this._callbacks=[]},_catchFirstRender:function(){requestAnimationFrame(function(){Polymer.RenderStatus._makeReady()})},_afterNextRenderQueue:[],_waitingNextRender:!1,afterNextRender:function(e,t,r){this._watchNextRender(),this._afterNextRenderQueue.push([e,t,r])},hasRendered:function(){return this._ready},_watchNextRender:function(){if(!this._waitingNextRender){this._waitingNextRender=!0;var e=function(){Polymer.RenderStatus._flushNextRender()};this._ready?requestAnimationFrame(e):this.whenReady(e)}},_flushNextRender:function(){var e=this;setTimeout(function(){e._flushRenderCallbacks(e._afterNextRenderQueue),e._afterNextRenderQueue=[],e._waitingNextRender=!1})},_flushRenderCallbacks:function(e){for(var t,r=0;r<e.length;r++)t=e[r],t[1].apply(t[0],t[2]||Polymer.nar)}},window.HTMLImports?HTMLImports.whenReady(function(){Polymer.RenderStatus._catchFirstRender()}):Polymer.RenderStatus._catchFirstRender(),Polymer.ImportStatus=Polymer.RenderStatus,Polymer.ImportStatus.whenLoaded=Polymer.ImportStatus.whenReady,function(){"use strict";var e=Polymer.Settings;Polymer.Base={__isPolymerInstance__:!0,_addFeature:function(e){this.extend(this,e)},registerCallback:function(){"max"===e.lazyRegister?this.beforeRegister&&this.beforeRegister():(this._desugarBehaviors(),this._doBehavior("beforeRegister")),this._registerFeatures(),e.lazyRegister||this.ensureRegisterFinished()},createdCallback:function(){this.__hasRegisterFinished||this._ensureRegisterFinished(this.__proto__),Polymer.telemetry.instanceCount++,this.root=this,this._doBehavior("created"),this._initFeatures()},ensureRegisterFinished:function(){this._ensureRegisterFinished(this)},_ensureRegisterFinished:function(t){t.__hasRegisterFinished===t.is&&t.is||("max"===e.lazyRegister&&(t._desugarBehaviors(),t._doBehaviorOnly("beforeRegister")),t.__hasRegisterFinished=t.is,t._finishRegisterFeatures&&t._finishRegisterFeatures(),t._doBehavior("registered"),e.usePolyfillProto&&t!==this&&t.extend(this,t))},attachedCallback:function(){var e=this;Polymer.RenderStatus.whenReady(function(){e.isAttached=!0,e._doBehavior("attached")})},detachedCallback:function(){var e=this;Polymer.RenderStatus.whenReady(function(){e.isAttached=!1,e._doBehavior("detached")})},attributeChangedCallback:function(e,t,r){this._attributeChangedImpl(e),this._doBehavior("attributeChanged",[e,t,r])},_attributeChangedImpl:function(e){this._setAttributeToProperty(this,e)},extend:function(e,t){if(e&&t)for(var r,i=Object.getOwnPropertyNames(t),o=0;o<i.length&&(r=i[o]);o++)this.copyOwnProperty(r,t,e);return e||t},mixin:function(e,t){for(var r in t)e[r]=t[r];return e},copyOwnProperty:function(e,t,r){var i=Object.getOwnPropertyDescriptor(t,e);i&&Object.defineProperty(r,e,i)},_logger:function(e,t){switch(1===t.length&&Array.isArray(t[0])&&(t=t[0]),e){case"log":case"warn":case"error":console[e].apply(console,t)}},_log:function(){var e=Array.prototype.slice.call(arguments,0);this._logger("log",e)},_warn:function(){var e=Array.prototype.slice.call(arguments,0);this._logger("warn",e)},_error:function(){var e=Array.prototype.slice.call(arguments,0);this._logger("error",e)},_logf:function(){return this._logPrefix.concat(this.is).concat(Array.prototype.slice.call(arguments,0))}},Polymer.Base._logPrefix=function(){var e=window.chrome&&!/edge/i.test(navigator.userAgent)||/firefox/i.test(navigator.userAgent);return e?["%c[%s::%s]:","font-weight: bold; background-color:#EEEE00;"]:["[%s::%s]:"]}(),Polymer.Base.chainObject=function(e,t){return e&&t&&e!==t&&(Object.__proto__||(e=Polymer.Base.extend(Object.create(t),e)),e.__proto__=t),e},Polymer.Base=Polymer.Base.chainObject(Polymer.Base,HTMLElement.prototype),window.CustomElements?Polymer.instanceof=CustomElements.instanceof:Polymer.instanceof=function(e,t){return e instanceof t},Polymer.isInstance=function(e){return Boolean(e&&e.__isPolymerInstance__)},Polymer.telemetry.instanceCount=0}(),function(){function e(){if(s)for(var e,t=document._currentScript||document.currentScript,r=t&&t.ownerDocument||document,i=r.querySelectorAll("dom-module"),o=i.length-1;o>=0&&(e=i[o]);o--){if(e.__upgraded__)return;CustomElements.upgrade(e)}}var t={},r={},i=function(e){return t[e]||r[e.toLowerCase()]},o=function(){return document.createElement("dom-module")};o.prototype=Object.create(HTMLElement.prototype),Polymer.Base.extend(o.prototype,{constructor:o,createdCallback:function(){this.register()},register:function(e){e=e||this.id||this.getAttribute("name")||this.getAttribute("is"),e&&(this.id=e,t[e]=this,r[e.toLowerCase()]=this)},import:function(t,r){if(t){var o=i(t);return o||(e(),o=i(t)),o&&r&&(o=o.querySelector(r)),o}}});var s=window.CustomElements&&!CustomElements.useNative;document.registerElement("dom-module",o)}(),Polymer.Base._addFeature({_prepIs:function(){if(!this.is){var e=(document._currentScript||document.currentScript).parentNode;if("dom-module"===e.localName){var t=e.id||e.getAttribute("name")||e.getAttribute("is");this.is=t}}this.is&&(this.is=this.is.toLowerCase())}}),Polymer.Base._addFeature({behaviors:[],_desugarBehaviors:function(){this.behaviors.length&&(this.behaviors=this._desugarSomeBehaviors(this.behaviors))},_desugarSomeBehaviors:function(e){var t=[];e=this._flattenBehaviorsList(e);for(var r=e.length-1;r>=0;r--){var i=e[r];t.indexOf(i)===-1&&(this._mixinBehavior(i),t.unshift(i))}return t},_flattenBehaviorsList:function(e){for(var t=[],r=0;r<e.length;r++){var i=e[r];i instanceof Array?t=t.concat(this._flattenBehaviorsList(i)):i?t.push(i):this._warn(this._logf("_flattenBehaviorsList","behavior is null, check for missing or 404 import"))}return t},_mixinBehavior:function(e){for(var t,r=Object.getOwnPropertyNames(e),i=0;i<r.length&&(t=r[i]);i++)Polymer.Base._behaviorProperties[t]||this.hasOwnProperty(t)||this.copyOwnProperty(t,e,this)},_prepBehaviors:function(){this._prepFlattenedBehaviors(this.behaviors)},_prepFlattenedBehaviors:function(e){for(var t=0,r=e.length;t<r;t++)this._prepBehavior(e[t]);this._prepBehavior(this)},_doBehavior:function(e,t){for(var r=0;r<this.behaviors.length;r++)this._invokeBehavior(this.behaviors[r],e,t);this._invokeBehavior(this,e,t)},_doBehaviorOnly:function(e,t){for(var r=0;r<this.behaviors.length;r++)this._invokeBehavior(this.behaviors[r],e,t)},_invokeBehavior:function(e,t,r){var i=e[t];i&&i.apply(this,r||Polymer.nar)},_marshalBehaviors:function(){for(var e=0;e<this.behaviors.length;e++)this._marshalBehavior(this.behaviors[e]);this._marshalBehavior(this)}}),Polymer.Base._behaviorProperties={hostAttributes:!0,beforeRegister:!0,registered:!0,properties:!0,observers:!0,listeners:!0,created:!0,attached:!0,detached:!0,attributeChanged:!0,ready:!0},Polymer.Base._addFeature({_getExtendedPrototype:function(e){return this._getExtendedNativePrototype(e)},_nativePrototypes:{},_getExtendedNativePrototype:function(e){var t=this._nativePrototypes[e];if(!t){var r=this.getNativePrototype(e);t=this.extend(Object.create(r),Polymer.Base),this._nativePrototypes[e]=t}return t},getNativePrototype:function(e){return Object.getPrototypeOf(document.createElement(e))}}),Polymer.Base._addFeature({_prepConstructor:function(){this._factoryArgs=this.extends?[this.extends,this.is]:[this.is];var e=function(){return this._factory(arguments)};this.hasOwnProperty("extends")&&(e.extends=this.extends),Object.defineProperty(this,"constructor",{value:e,writable:!0,configurable:!0}),e.prototype=this},_factory:function(e){var t=document.createElement.apply(document,this._factoryArgs);return this.factoryImpl&&this.factoryImpl.apply(t,e),t}}),Polymer.nob=Object.create(null),Polymer.Base._addFeature({properties:{},getPropertyInfo:function(e){var t=this._getPropertyInfo(e,this.properties);if(!t)for(var r=0;r<this.behaviors.length;r++)if(t=this._getPropertyInfo(e,this.behaviors[r].properties))return t;return t||Polymer.nob},_getPropertyInfo:function(e,t){var r=t&&t[e];return"function"==typeof r&&(r=t[e]={type:r}),r&&(r.defined=!0),r},_prepPropertyInfo:function(){this._propertyInfo={};for(var e=0;e<this.behaviors.length;e++)this._addPropertyInfo(this._propertyInfo,this.behaviors[e].properties);this._addPropertyInfo(this._propertyInfo,this.properties),this._addPropertyInfo(this._propertyInfo,this._propertyEffects)},_addPropertyInfo:function(e,t){if(t){var r,i;for(var o in t)r=e[o],i=t[o],("_"!==o[0]||i.readOnly)&&(e[o]?(r.type||(r.type=i.type),r.readOnly||(r.readOnly=i.readOnly)):e[o]={type:"function"==typeof i?i:i.type,readOnly:i.readOnly,attribute:Polymer.CaseMap.camelToDashCase(o)})}}}),Polymer.CaseMap={_caseMap:{},_rx:{dashToCamel:/-[a-z]/g,camelToDash:/([A-Z])/g},dashToCamelCase:function(e){return this._caseMap[e]||(this._caseMap[e]=e.indexOf("-")<0?e:e.replace(this._rx.dashToCamel,function(e){return e[1].toUpperCase()}))},camelToDashCase:function(e){return this._caseMap[e]||(this._caseMap[e]=e.replace(this._rx.camelToDash,"-$1").toLowerCase())}},Polymer.Base._addFeature({_addHostAttributes:function(e){this._aggregatedAttributes||(this._aggregatedAttributes={}),e&&this.mixin(this._aggregatedAttributes,e)},_marshalHostAttributes:function(){this._aggregatedAttributes&&this._applyAttributes(this,this._aggregatedAttributes)},_applyAttributes:function(e,t){for(var r in t)if(!this.hasAttribute(r)&&"class"!==r){var i=t[r];this.serializeValueToAttribute(i,r,this)}},_marshalAttributes:function(){this._takeAttributesToModel(this)},_takeAttributesToModel:function(e){if(this.hasAttributes())for(var t in this._propertyInfo){var r=this._propertyInfo[t];this.hasAttribute(r.attribute)&&this._setAttributeToProperty(e,r.attribute,t,r)}},_setAttributeToProperty:function(e,t,r,i){if(!this._serializing&&(r=r||Polymer.CaseMap.dashToCamelCase(t),i=i||this._propertyInfo&&this._propertyInfo[r],i&&!i.readOnly)){var o=this.getAttribute(t);e[r]=this.deserialize(o,i.type)}},_serializing:!1,reflectPropertyToAttribute:function(e,t,r){this._serializing=!0,r=void 0===r?this[e]:r,this.serializeValueToAttribute(r,t||Polymer.CaseMap.camelToDashCase(e)),this._serializing=!1},serializeValueToAttribute:function(e,t,r){var i=this.serialize(e);r=r||this,void 0===i?r.removeAttribute(t):r.setAttribute(t,i)},deserialize:function(e,t){switch(t){case Number:e=Number(e);break;case Boolean:e=null!=e;break;case Object:try{e=JSON.parse(e)}catch(e){}break;case Array:try{e=JSON.parse(e)}catch(t){e=null,console.warn("Polymer::Attributes: couldn`t decode Array as JSON")}break;case Date:e=new Date(e);break;case String:}return e},serialize:function(e){switch(typeof e){case"boolean":return e?"":void 0;case"object":if(e instanceof Date)return e.toString();if(e)try{return JSON.stringify(e)}catch(e){return""}default:return null!=e?e:void 0}}}),Polymer.version="1.7.1",Polymer.Base._addFeature({_registerFeatures:function(){this._prepIs(),this._prepBehaviors(),this._prepConstructor(),this._prepPropertyInfo()},_prepBehavior:function(e){this._addHostAttributes(e.hostAttributes)},_marshalBehavior:function(e){},_initFeatures:function(){this._marshalHostAttributes(),this._marshalBehaviors()}});</script>
 
 
@@ -2747,13 +2748,13 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
       <div class="outer">
         <div class="container flex-horizontal">
           <div class="leftButton">
-              <paper-icon-button src="/pictures/chevron_left.svg" on-tap="prev" class="round"></paper-icon-button>
+              <paper-icon-button src="/icns/chevron_left.svg" on-tap="prev" class="round"></paper-icon-button>
           </div>
           <div class="flexchild">
             <iron-image id="image" src="{{_arrayItem(images.*, currentPos)}}" title$="{{_arrayItem(images.*, currentPos)}}" sizing="contain" on-track="_handleTrack"></iron-image>
           </div>
           <div class="rightButton">
-              <paper-icon-button src="/pictures/chevron_right.svg" on-tap="next" class="round"></paper-icon-button>
+              <paper-icon-button src="/icns/chevron_right.svg" on-tap="next" class="round"></paper-icon-button>
           </div>
         </div>
         <div class="footer">
@@ -2765,6 +2766,30 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
   </template>
 
   <script>Polymer({is:"image-slider",properties:{images:{type:Array,value:[],reflectToAttribute:!0,observer:"_onImagesChanged"},captions:{type:Array,value:[],reflectToAttribute:!0},currentPos:{type:Number,value:0,readonly:!0,observer:"_onCurrentPosChanged"},noBullets:{type:Boolean,value:!0},_imgsWithClass:{type:Array,value:[],readonly:!0}},prev:function(){this.currentPos>0?this.currentPos=this.currentPos-1:this.currentPos=this.images.length-1},next:function(){this.currentPos<this.images.length-1?this.currentPos=this.currentPos+1:this.currentPos=0},_handleTrack:function(t){switch(t.detail.state){case"end":t.detail.dx>100?this.prev():t.detail.dx<-100&&this.next()}},_changePos:function(t){this.currentPos=t.target.getAttribute("data-index")},_arrayItem:function(t,e){return t.base[e]},_onImagesChanged:function(){0==this.images.length?this.hidden=!0:(0==this.currentPos&&this._onCurrentPosChanged(),this.currentPos=0,this.hidden=!1)},_onCurrentPosChanged:function(){var t=this.currentPos;this._imgsWithClass=this.images.map(function(e,r){return{image:e,class:r==t?"active":""}})}});</script>
+</dom-module>
+<dom-module id="icon-toggle" assetpath="./">
+
+  <template>
+
+    <style>
+      :host {
+        display: inline-block;
+      }
+      iron-icon {
+        fill: var(--icon-toggle-color, rgba(0,0,0,0));
+        stroke: var(--icon-toggle-outline-color, currentcolor);
+      }
+      :host([pressed]) iron-icon {
+        fill: var(--icon-toggle-pressed-color, currentcolor);
+      }
+    </style>
+
+    <iron-icon src="[[toggleIcon]]"></iron-icon>
+
+  </template>
+
+  <script>Polymer({is:"icon-toggle",properties:{pressed:{type:Boolean,notify:!0,reflectToAttribute:!0,value:!1},toggleIcon:{type:String}},listeners:{tap:"toggle"},toggle:function(){this.pressed=!this.pressed}});</script>
+
 </dom-module>
 <iron-iconset-svg name="icons" size="24">
   <svg>
@@ -2955,10 +2980,19 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
       .flex3child {
         @apply(--layout-flex-3);
       }
+
       .year {
           width: 70px;
           min-width: 70px;
           max-width: 70px;
+          color: #fff;
+          margin: 2px 2px 2px 25px;
+          padding: 0;
+          font-size: 12px;
+      }
+
+      .eraName {
+          width: 100%;
           color: #fff;
           margin: 2px 2px 2px 25px;
           padding: 0;
@@ -3131,6 +3165,22 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
         padding: 0px;
         overflow: hidden;
 
+        --testcolour1: #00ff00;
+        --display1_1: flex;
+        --display1_2: flex;
+        --display1_3: flex;
+        --display1_4: flex;
+        --display2_1: flex;
+        --display2_2: flex;
+        --display2_3: flex;
+        --display2_4: flex;
+        --display2_5: flex;
+        --display3_1: flex;
+        --display3_2: flex;
+        --display3_3: flex;
+        --display4_1: flex;
+        --display4_1: flex;
+
         iron-image {
           --iron-image-width: 100%;
         }
@@ -3163,14 +3213,80 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
           color: #fff;
       }
 
+      .era {
+
+      }
+
+      .campus{
+        display: var(--customdisplay, flex);
+
+      }
+
+      ._1_1_admin{
+        display: var(--test1_1, flex);
+
+      }
+
+      ._1_2_campus{
+        display: var(--test1_2, flex);
+      }
+
+      ._1_3_students{
+        display: var(--test1_3, flex);
+      }
+
+      ._1_4_teaching{
+        display: var(--test1_4, flex);
+      }
+
+      ._2_1_art_and_design{
+        display: var(--display2_1);
+      }
+
+      ._2_2_science_and_technology{
+        display: var(--display2_2);
+      }
+
+      ._2_3_business{
+        display: var(--display2_3);
+      }
+
+      ._2_4_research{
+        display: var(--display2_4);
+      }
+
+      ._2_5_multidisciplinarity{
+        display: var(--display2_5);
+      }
+
+      ._3_1_entrepreneurship{
+        display: var(--display3_1);
+      }
+
+      ._3_2_corporate_collaboration{
+        display: var(--display3_2);
+      }
+
+      ._3_3_academic_collaboration{
+        display: var(--display3_3);
+      }
+
+      ._4_1_global_event{
+        display: var(--display4_1);
+      }
+
+      ._4_2_regional_event{
+        display: var(--display4_2);
+      }
+
     </style>
 
 
 
     
     <div class="container flex-horizontal">
-      <div style="position: relative; left: 0; top: 0">
-        <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px">
+      <div style="position: relative; left: 0; top: 0; min-width: 120px">
+        
         <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px">
       </div>
       <div class="flexchild">
@@ -3202,13 +3318,16 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
     
     <template is="dom-repeat" items="{{eras}}" sort="sortEras">
 
-      <div class="era">
+      <div class="era" style="background:url([[item.images.0.url]]) no-repeat">
+
+        <p class="eraName"> {{item.name}} </p>
+        
 
         
         <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
-        
-          <div class="campus">  
+          
+            <div class="_1_1_admin">
 
             <div class="container flex-horizontal">
 
@@ -3257,7 +3376,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
                 <div class="event" id="event">
                   <div class="event-header" style$="background-color: [[eventColour(eventItem.type)]];">
                     <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                      <iron-icon src="/pictures/{{eventItem.type}}.svg" style="margin-right: 8px"></iron-icon>
+                      <iron-icon src="/icns/{{eventItem.type}}.svg" style="margin-right: 8px"></iron-icon>
                       <span class="buttontext">{{eventItem.name}}</span>
                     </paper-button>
                   </div>
@@ -3268,7 +3387,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
                           <iron-image style="width: 100%; height: 240px" sizing="cover" src="[[eventItem.images.0.url]]"></iron-image>
                           
 
-                          <paper-icon-button src="/pictures/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                          <paper-icon-button src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
 
                           <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal="">
 
@@ -3276,7 +3395,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
 
                             <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
                             
-                              <paper-icon-button class="closeButton" src="/pictures/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
+                              <paper-icon-button class="closeButton" src="/icns/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
                             
                           </paper-dialog>
 
@@ -3332,7 +3451,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
                           <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
                             <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
                               
-                              <iron-icon src="/pictures/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
+                              <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
                               <span class="buttontext">{{association.name}}</span>
                             </paper-button>
                           </div>
@@ -3370,11 +3489,20 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
 
     
     <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button icon="1_1 admin" title="Admin" on-tap="handleFilter" data-args="1_1 admin"></paper-icon-button>
-      <paper-icon-button icon="1_2 campus" title="Campus" on-tap="handleFilter" data-args="1_2 campus"></paper-icon-button>
-      <paper-icon-button icon="1_3 students" title="Students" on-tap="handleFilter" data-args="1_3 students"></paper-icon-button>
-      <paper-icon-button icon="1_4 teaching" title="Teaching" on-tap="handleFilter" data-args="1_4 teaching"></paper-icon-button>
-      <paper-icon-button icon="2_1 art and design" title="Art and design" on-tap="handleFilter" data-args="2_1 art and design"></paper-icon-button>
+      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1" style="background-color: green"></paper-icon-button>
+      <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
+      <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
+      <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
+      <paper-icon-button id="2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
+      <paper-icon-button id="2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
+      <paper-icon-button id="2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
+      <paper-icon-button id="2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
+      <paper-icon-button id="2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
+      <paper-icon-button id="3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
+      <paper-icon-button id="3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
+      <paper-icon-button id="3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
+      <paper-icon-button id="4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
+      <paper-icon-button id="4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
     </paper-toast>
 
     
@@ -3386,7 +3514,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){console.log("args : "+e.target.dataset.args);var t=e.target.dataset.args;"1_1 admin"==t?(console.log("hide"),this.$.info.hidden=!0):(console.log("show"),this.$.info.hidden=!1)},handleEventCollapse:function(e,t,n){var a=e.model.eventItem.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.eventItem.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){var t="--display"+e.target.dataset.args;"#"+e.target.dataset.args;console.log("filter : "+t),console.log("calculated display style : "+this.getComputedStyleValue(t)),this.customStyle["--test1_1"]="none",this.updateStyles()},handleEventCollapse:function(e,t,n){var a=e.model.eventItem.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.eventItem.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"_1_1_admin":t="#5677FC";break;case"_1_2_campus":t="#5677FC";break;case"_1_3_students":t="#5677FC";break;case"_1_4_teaching":t="#5677FC";break;case"_2_1_art_and_design":t="#EC407A";break;case"_2_2_science_and_technology":t="#EC407A";break;case"_2_3_business":t="#EC407A";break;case"_2_4_research":t="#EC407A";break;case"_2_5_multidisciplinarity":t="#EC407A";break;case"_3_1_entrepreneurship":t="#FF9800";break;case"_3_2_corporate_collaboration":t="#FF9800";break;case"_3_3_academic_collaboration":t="#FF9800";break;case"_4_1_global_event":t="#7ED321";break;case"_4_2_regional_event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
 
 </dom-module>
 </body></html>

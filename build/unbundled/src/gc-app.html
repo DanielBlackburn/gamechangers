@@ -16,6 +16,7 @@
 <link rel="import" href="../bower_components/parallax-container/parallax-container.html">
 <link rel="import" href="vimeo-player.html">
 <link rel="import" href="image-slider.html">
+<link rel="import" href="icon-toggle.html">
 
 <link rel="import" href="gc-icons.html">
 <link rel="import" href="gc-styles.html">
@@ -31,6 +32,22 @@
         display: block;
         padding: 0px;
         overflow: hidden;
+
+        --testcolour1: #00ff00;
+        --display1_1: flex;
+        --display1_2: flex;
+        --display1_3: flex;
+        --display1_4: flex;
+        --display2_1: flex;
+        --display2_2: flex;
+        --display2_3: flex;
+        --display2_4: flex;
+        --display2_5: flex;
+        --display3_1: flex;
+        --display3_2: flex;
+        --display3_3: flex;
+        --display4_1: flex;
+        --display4_1: flex;
 
         iron-image {
           --iron-image-width: 100%;
@@ -64,14 +81,80 @@
           color: #fff;
       }
 
+      .era {
+
+      }
+
+      .campus{
+        display: var(--customdisplay, flex);
+
+      }
+
+      ._1_1_admin{
+        display: var(--test1_1, flex);
+
+      }
+
+      ._1_2_campus{
+        display: var(--test1_2, flex);
+      }
+
+      ._1_3_students{
+        display: var(--test1_3, flex);
+      }
+
+      ._1_4_teaching{
+        display: var(--test1_4, flex);
+      }
+
+      ._2_1_art_and_design{
+        display: var(--display2_1);
+      }
+
+      ._2_2_science_and_technology{
+        display: var(--display2_2);
+      }
+
+      ._2_3_business{
+        display: var(--display2_3);
+      }
+
+      ._2_4_research{
+        display: var(--display2_4);
+      }
+
+      ._2_5_multidisciplinarity{
+        display: var(--display2_5);
+      }
+
+      ._3_1_entrepreneurship{
+        display: var(--display3_1);
+      }
+
+      ._3_2_corporate_collaboration{
+        display: var(--display3_2);
+      }
+
+      ._3_3_academic_collaboration{
+        display: var(--display3_3);
+      }
+
+      ._4_1_global_event{
+        display: var(--display4_1);
+      }
+
+      ._4_2_regional_event{
+        display: var(--display4_2);
+      }
+
     </style>
 
 
 
     
     <div class="container flex-horizontal">
-      <div style="position: relative; left: 0; top: 0">
-        <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px">
+      <div style="position: relative; left: 0; top: 0; min-width: 120px">
+        
         <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px">
       </div>
       <div class="flexchild">
@@ -103,13 +186,16 @@
     
     <template is="dom-repeat" items="{{eras}}" sort="sortEras">
 
-      <div class="era">
+      <div class="era" style="background:url([[item.images.0.url]]) no-repeat">
+
+        <p class="eraName"> {{item.name}} </p>
+        
 
         
         <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
-        
-          <div class="campus">  
+          
+            <div class="_1_1_admin">
 
             <div class="container flex-horizontal">
 
@@ -158,7 +244,7 @@
                 <div class="event" id="event">
                   <div class="event-header" style$="background-color: [[eventColour(eventItem.type)]];">
                     <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                      <iron-icon src="/pictures/{{eventItem.type}}.svg" style="margin-right: 8px"></iron-icon>
+                      <iron-icon src="/icns/{{eventItem.type}}.svg" style="margin-right: 8px"></iron-icon>
                       <span class="buttontext">{{eventItem.name}}</span>
                     </paper-button>
                   </div>
@@ -169,7 +255,7 @@
                           <iron-image style="width: 100%; height: 240px" sizing="cover" src="[[eventItem.images.0.url]]"></iron-image>
                           
 
-                          <paper-icon-button src="/pictures/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                          <paper-icon-button src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
 
                           <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal="">
 
@@ -177,7 +263,7 @@
 
                             <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
                             
-                              <paper-icon-button class="closeButton" src="/pictures/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
+                              <paper-icon-button class="closeButton" src="/icns/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
                             
                           </paper-dialog>
 
@@ -233,7 +319,7 @@
                           <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
                             <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
                               
-                              <iron-icon src="/pictures/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
+                              <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
                               <span class="buttontext">{{association.name}}</span>
                             </paper-button>
                           </div>
@@ -271,11 +357,20 @@
 
     
     <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button icon="1_1 admin" title="Admin" on-tap="handleFilter" data-args="1_1 admin"></paper-icon-button>
-      <paper-icon-button icon="1_2 campus" title="Campus" on-tap="handleFilter" data-args="1_2 campus"></paper-icon-button>
-      <paper-icon-button icon="1_3 students" title="Students" on-tap="handleFilter" data-args="1_3 students"></paper-icon-button>
-      <paper-icon-button icon="1_4 teaching" title="Teaching" on-tap="handleFilter" data-args="1_4 teaching"></paper-icon-button>
-      <paper-icon-button icon="2_1 art and design" title="Art and design" on-tap="handleFilter" data-args="2_1 art and design"></paper-icon-button>
+      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1" style="background-color: green"></paper-icon-button>
+      <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
+      <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
+      <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
+      <paper-icon-button id="2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
+      <paper-icon-button id="2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
+      <paper-icon-button id="2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
+      <paper-icon-button id="2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
+      <paper-icon-button id="2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
+      <paper-icon-button id="3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
+      <paper-icon-button id="3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
+      <paper-icon-button id="3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
+      <paper-icon-button id="4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
+      <paper-icon-button id="4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
     </paper-toast>
 
     
@@ -287,7 +382,7 @@
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){console.log("args : "+e.target.dataset.args);var t=e.target.dataset.args;"1_1 admin"==t?(console.log("hide"),this.$.info.hidden=!0):(console.log("show"),this.$.info.hidden=!1)},handleEventCollapse:function(e,t,n){var a=e.model.eventItem.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.eventItem.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){var t="--display"+e.target.dataset.args;"#"+e.target.dataset.args;console.log("filter : "+t),console.log("calculated display style : "+this.getComputedStyleValue(t)),this.customStyle["--test1_1"]="none",this.updateStyles()},handleEventCollapse:function(e,t,n){var a=e.model.eventItem.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.eventItem.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"_1_1_admin":t="#5677FC";break;case"_1_2_campus":t="#5677FC";break;case"_1_3_students":t="#5677FC";break;case"_1_4_teaching":t="#5677FC";break;case"_2_1_art_and_design":t="#EC407A";break;case"_2_2_science_and_technology":t="#EC407A";break;case"_2_3_business":t="#EC407A";break;case"_2_4_research":t="#EC407A";break;case"_2_5_multidisciplinarity":t="#EC407A";break;case"_3_1_entrepreneurship":t="#FF9800";break;case"_3_2_corporate_collaboration":t="#FF9800";break;case"_3_3_academic_collaboration":t="#FF9800";break;case"_4_1_global_event":t="#7ED321";break;case"_4_2_regional_event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
 
 </dom-module>
 </body></html>
