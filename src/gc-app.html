@@ -17,6 +17,7 @@
 <link rel="import" href="../bower_components/parallax-container/parallax-container.html">
 <link rel="import" href="vimeo-player.html">
 <link rel="import" href="image-slider.html">
+<link rel="import" href="icon-toggle.html">
 <!-- Project elements-->
 <link rel="import" href="gc-icons.html">
 <link rel="import" href="gc-styles.html">
@@ -32,6 +33,22 @@
         display: block;
         padding: 0px;
         overflow: hidden;
+
+        --testcolour1: #00ff00;
+        --display1_1: flex;
+        --display1_2: flex;
+        --display1_3: flex;
+        --display1_4: flex;
+        --display2_1: flex;
+        --display2_2: flex;
+        --display2_3: flex;
+        --display2_4: flex;
+        --display2_5: flex;
+        --display3_1: flex;
+        --display3_2: flex;
+        --display3_3: flex;
+        --display4_1: flex;
+        --display4_1: flex;
 
         iron-image {
           --iron-image-width: 100%;
@@ -65,14 +82,80 @@
           color: #fff;
       }
 
+      .era {
+
+      }
+
+      .campus{
+        display: var(--customdisplay, flex);
+
+      }
+
+      ._1_1_admin{
+        display: var(--test1_1, flex);
+
+      }
+
+      ._1_2_campus{
+        display: var(--test1_2, flex);
+      }
+
+      ._1_3_students{
+        display: var(--test1_3, flex);
+      }
+
+      ._1_4_teaching{
+        display: var(--test1_4, flex);
+      }
+
+      ._2_1_art_and_design{
+        display: var(--display2_1);
+      }
+
+      ._2_2_science_and_technology{
+        display: var(--display2_2);
+      }
+
+      ._2_3_business{
+        display: var(--display2_3);
+      }
+
+      ._2_4_research{
+        display: var(--display2_4);
+      }
+
+      ._2_5_multidisciplinarity{
+        display: var(--display2_5);
+      }
+
+      ._3_1_entrepreneurship{
+        display: var(--display3_1);
+      }
+
+      ._3_2_corporate_collaboration{
+        display: var(--display3_2);
+      }
+
+      ._3_3_academic_collaboration{
+        display: var(--display3_3);
+      }
+
+      ._4_1_global_event{
+        display: var(--display4_1);
+      }
+
+      ._4_2_regional_event{
+        display: var(--display4_2);
+      }
+
     </style>
 
 <!--    <parallax-container> -->
 
     <!-- Alpha message section above timeline -->
     <div class="container flex-horizontal">
-      <div style="position: relative; left: 0; top: 0;">
-        <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px;"/>
+      <div style="position: relative; left: 0; top: 0; min-width: 120px;">
+        <!-- <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px;"/> -->
         <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px;"/>
       </div>
       <div class="flexchild">
@@ -108,189 +191,215 @@
     <!-- Spinner - hidden after data has loaded
     <paper-spinner-lite class="orange" active></paper-spinner-lite>
     -->
-
     <!-- Timeline template -->
-    <template is="dom-repeat" items="{{events}}" sort="sortEvents">
+    <template is="dom-repeat" items="{{eras}}" sort="sortEras">
 
-    <!--  <div class="{{item.type}}"> -->
-      <div class="campus">
-        <div class="container flex-horizontal">
+      <div class="era" style="background:url([[item.images.0.url]]) no-repeat;">
 
-        <!-- Column 1 - the year/decade -->
-        <div class="year">
-          <template is="dom-if" if="{{yearIsFirstInDecade(item.from)}}">
-            <div style="font-weight: bold;">{{eventYear(item.from)}}</div>
-          </template>
-          <template is="dom-if" if="{{!yearIsFirstInDecade(item.from)}}">
-            {{eventYear(item.from)}}
-          </template>
-        </div>
+        <p class="eraName"> {{item.name}} </p>
+        <!-- <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[item.images.0.url]]"></iron-image> -->
 
-        <!-- Column 2 - comments -->
-        <!-- <div class="flexchild"> -->
-          <div class="commentColumn">
-            <div class="comment" id$="comment{{item.id}}" style="display: none;">
-              <div class="flexchild">
+        <!-- Events template -->
+        <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
-                 <div class="comment-container">
+          <!-- <div class="{{eventItem.type}}"> -->
+            <div class="_1_1_admin">
 
-                    <div class="comment-icon">
-                      <iron-icon icon="comment"></iron-icon>
-                    </div>
+            <div class="container flex-horizontal">
 
-                    <div class="comment-text">
-                      <template is="dom-repeat" items="{{item.latestPublicComments}}" as="comment">
-                        <p>{{comment.notes}}</p>
-                        <p style="font-size: 11px;">{{comment.name}}</p>
-                      </template>
-                    </div>
-
-                </div>
-
-              </div>
-              <div class="leftArrow">
-                <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
-              </div>
+            <!-- Column 1 - the year/decade -->
+            <div class="year">
+              <template is="dom-if" if="{{yearIsFirstInDecade(eventItem.from)}}">
+                <div style="font-weight: bold;">{{eventYear(eventItem.from)}}</div>
+              </template>
+              <template is="dom-if" if="{{!yearIsFirstInDecade(eventItem.from)}}">
+                {{eventYear(eventItem.from)}}
+              </template>
             </div>
-          </div>
-        <!-- </div> -->
 
-        <!-- Column 3 - events -->
-        <div class="flexchild">
-          <paper-card>
-            <div class="event" id="event">
-              <div class="event-header" style$="background-color: [[eventColour(item.type)]];">
-                <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
-                  <iron-icon src="/pictures/{{item.type}}.svg" style="margin-right: 8px;"></iron-icon>
-                  <span class="buttontext">{{item.name}}</span>
-                </paper-button>
-              </div>
-              <iron-collapse id$="collapse{{item.id}}" style$="width:100%;">
-                  <!-- Image div need to be conditional on images being present. also add icon button to go full screen -->
-                  <template is="dom-if" if="{{!arrayEmpty(item.images)}}">
-                    <div class="event-image">
-                      <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[item.images.0.url]]"></iron-image>
-                      <!-- ADD definitiion of Modal to show all images here and icon button to show the modal -->
+            <!-- Column 2 - comments -->
+            <!-- <div class="flexchild"> -->
+              <div class="commentColumn">
+                <div class="comment" id$="comment{{eventItem.id}}" style="display: none;">
+                  <div class="flexchild">
 
-                      <paper-icon-button src="/pictures/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                     <div class="comment-container">
 
-                      <paper-dialog id="carouselDialog[[item.id]]" class="carousel-dialog" modal>
-
-
-
-                        <image-slider images="{{formatImageArray(item.images)}}" captions="{{formatCaptionArray(item.images)}}"></image-slider>
-                        <!-- <div class="buttons"> -->
-                          <paper-icon-button class="closeButton" src="/pictures/close.svg" dialog-confirm autofocus></paper-icon-button>
-                        <!-- </div> -->
-                      </paper-dialog>
-
-                    </div>
-                  </template>
-
-                  <!-- Vimeo player embed test
-                  <template is="dom-if" if="{{arrayEmpty(item.images)}}">
-                    <vimeo-player id="my-demo" videoid="39189423"></vimeo-player>
-                  </template>
-                  -->
-
-                  <div class="event-text">
-                     <!-- <div inner-h-t-m-l="{{justText(item.notes)}}"> </div> -->
-                     <p style="white-space: pre-line;">{{item.notes}}
-                     </p>
-                  </div>
-                  <div class="event-footer">
-                       <paper-button on-tap="handleEventComment">Comment</paper-button>
-
-                      <!-- <paper-button raised onclick="modal{{item.id}}.open()">Comment</paper-button> -->
-
-                      <paper-dialog id="commentDialog[[item.id]]" modal>
-                        <p>Please enter your name, email and comment below.</p>
-                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
-                              <paper-input name="name" label="Name" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
-                              <paper-input name="email" label="Email" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
-                              <paper-input name="notes" label="Comment" char-counter maxlength="160" auto-validate error-message="Please enter a comment"></paper-input>
-                              <input type="hidden" name="commentedItemId" value="[[item.id]]"/>
-                              <br>
-                              <paper-button dialog-dismiss>Cancel</paper-button>
-                              <paper-button raised autofocus on-tap="submitForm">Submit</paper-button>
-                        </form>
-                        <div class="buttons">
-
+                        <div class="comment-icon">
+                          <iron-icon icon="comment"></iron-icon>
                         </div>
 
-                      </paper-dialog>
-
-                  </div>
-              </iron-collapse>
-            </div>
-          </paper-card>
-        </div>
-
-        <!-- Column 4 - associations -->
-        <div class="flexchild">
-          <div class="associationColumn">
-            <div class="associations" id$="associations{{item.id}}" style="display: none;">
-              <div class="rightArrow">
-                <img src="/pictures/arrowRight.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
-              </div>
-              <div class="flexchild">
-                <template is="dom-repeat" items="{{item.associatedItems}}" as="association">
-                  <paper-card>
-                    <div class="association">
-                      <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
-                        <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
-                          <!-- <iron-icon icon={{item.type}} style="margin-right: 8px;"></iron-icon> -->
-                          <iron-icon src="/pictures/{{association.type}}.svg" style="margin-right: 8px;"></iron-icon>
-                          <span class="buttontext">{{association.name}}</span>
-                        </paper-button>
-                      </div>
-                      <iron-collapse id$="associationCollapse{{item.id}}{{association.id}}" style="width:100%;">
-
-                          <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
-                            <div class="association-image">
-                              <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
-
-                            </div>
+                        <div class="comment-text">
+                          <template is="dom-repeat" items="{{eventItem.latestPublicComments}}" as="comment">
+                            <p>{{comment.notes}}</p>
+                            <p style="font-size: 11px;">{{comment.name}}</p>
                           </template>
-
-                          <div class="association-text">
-                             <!-- <div inner-h-t-m-l="{{justText(association.notes)}}"></div> -->
-                             <p>{{association.notes}}</p>
-                          </div>
-                      </iron-collapse>
+                        </div>
 
                     </div>
-                  </paper-card>
-                </template>
+
+                  </div>
+                  <div class="leftArrow">
+                    <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
+                  </div>
+                </div>
+              </div>
+            <!-- </div> -->
+
+            <!-- Column 3 - events -->
+            <div class="flexchild">
+              <paper-card>
+                <div class="event" id="event">
+                  <div class="event-header" style$="background-color: [[eventColour(eventItem.type)]];">
+                    <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
+                      <iron-icon src="/icns/{{eventItem.type}}.svg" style="margin-right: 8px;"></iron-icon>
+                      <span class="buttontext">{{eventItem.name}}</span>
+                    </paper-button>
+                  </div>
+                  <iron-collapse id$="collapse{{eventItem.id}}" style$="width:100%;">
+                      <!-- Image div need to be conditional on images being present. also add icon button to go full screen -->
+                      <template is="dom-if" if="{{!arrayEmpty(eventItem.images)}}">
+                        <div class="event-image">
+                          <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[eventItem.images.0.url]]"></iron-image>
+                          <!-- ADD definitiion of Modal to show all images here and icon button to show the modal -->
+
+                          <paper-icon-button src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+
+                          <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal>
+
+
+
+                            <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
+                            <!-- <div class="buttons"> -->
+                              <paper-icon-button class="closeButton" src="/icns/close.svg" dialog-confirm autofocus></paper-icon-button>
+                            <!-- </div> -->
+                          </paper-dialog>
+
+                        </div>
+                      </template>
+
+                      <!-- Vimeo player embed test
+                      <template is="dom-if" if="{{arrayEmpty(eventItem.images)}}">
+                        <vimeo-player id="my-demo" videoid="39189423"></vimeo-player>
+                      </template>
+                      -->
+
+                      <div class="event-text">
+                         <!-- <div inner-h-t-m-l="{{justText(eventItem.notes)}}"> </div> -->
+                         <p style="white-space: pre-line;">{{eventItem.notes}}
+                         </p>
+                      </div>
+                      <div class="event-footer">
+                           <paper-button on-tap="handleEventComment">Comment</paper-button>
+
+                          <!-- <paper-button raised onclick="modal{{eventItem.id}}.open()">Comment</paper-button> -->
+
+                          <paper-dialog id="commentDialog[[eventItem.id]]" modal>
+                            <p>Please enter your name, email and comment below.</p>
+                            <form is="iron-form" id="form[[eventItem.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
+                                  <paper-input name="name" label="Name" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
+                                  <paper-input name="email" label="Email" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
+                                  <paper-input name="notes" label="Comment" char-counter maxlength="160" auto-validate error-message="Please enter a comment"></paper-input>
+                                  <input type="hidden" name="commentedItemId" value="[[eventItem.id]]"/>
+                                  <br>
+                                  <paper-button dialog-dismiss>Cancel</paper-button>
+                                  <paper-button raised autofocus on-tap="submitForm">Submit</paper-button>
+                            </form>
+                            <div class="buttons">
+
+                            </div>
+
+                          </paper-dialog>
+
+                      </div>
+                  </iron-collapse>
+                </div>
+              </paper-card>
+            </div>
+
+            <!-- Column 4 - associations -->
+            <div class="flexchild">
+              <div class="associationColumn">
+                <div class="associations" id$="associations{{eventItem.id}}" style="display: none;">
+                  <div class="rightArrow">
+                    <img src="/pictures/arrowRight.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
+                  </div>
+                  <div class="flexchild">
+                    <template is="dom-repeat" items="{{eventItem.associatedItems}}" as="association">
+                      <paper-card>
+                        <div class="association">
+                          <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
+                            <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
+                              <!-- <iron-icon icon={{eventItem.type}} style="margin-right: 8px;"></iron-icon> -->
+                              <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px;"></iron-icon>
+                              <span class="buttontext">{{association.name}}</span>
+                            </paper-button>
+                          </div>
+                          <iron-collapse id$="associationCollapse{{eventItem.id}}{{association.id}}" style="width:100%;">
+
+                              <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
+                                <div class="association-image">
+                                  <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
+
+                                </div>
+                              </template>
+
+                              <div class="association-text">
+                                 <!-- <div inner-h-t-m-l="{{justText(association.notes)}}"></div> -->
+                                 <p>{{association.notes}}</p>
+                              </div>
+                          </iron-collapse>
+
+                        </div>
+                      </paper-card>
+                    </template>
+                  </div>
+                </div>
               </div>
             </div>
+
+            </div>
           </div>
-        </div>
+
+          </template>
 
         </div>
-      </div>
-
-
 
     </template>
 
     <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
     <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button icon="1_1 admin" title="Admin" on-tap="handleFilter" data-args="1_1 admin"></paper-icon-button>
-      <paper-icon-button icon="1_2 campus" title="Campus" on-tap="handleFilter" data-args="1_2 campus"></paper-icon-button>
-      <paper-icon-button icon="1_3 students" title="Students" on-tap="handleFilter" data-args="1_3 students"></paper-icon-button>
-      <paper-icon-button icon="1_4 teaching" title="Teaching" on-tap="handleFilter" data-args="1_4 teaching"></paper-icon-button>
-      <paper-icon-button icon="2_1 art and design" title="Art and design" on-tap="handleFilter" data-args="2_1 art and design"></paper-icon-button>
+      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1" style="background-color: green;"></paper-icon-button>
+      <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
+      <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
+      <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
+      <paper-icon-button id="2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
+      <paper-icon-button id="2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
+      <paper-icon-button id="2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
+      <paper-icon-button id="2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
+      <paper-icon-button id="2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
+      <paper-icon-button id="3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
+      <paper-icon-button id="3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
+      <paper-icon-button id="3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
+      <paper-icon-button id="4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
+      <paper-icon-button id="4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
     </paper-toast>
 
     <!--    </parallax-container> -->
 
-    <!-- Initial call to get event data -->
+    <!-- Initial call to get event data
     <iron-ajax
       id="requestEvents"
       url=""
       handle-as="json"
       on-response="handleResponseEvents">
+    </iron-ajax> -->
+    <!-- Initial call to get Era data -->
+    <iron-ajax
+      id="requestEras"
+      url=""
+      handle-as="json"
+      on-response="handleResponseEras">
     </iron-ajax>
 
   </template>
@@ -335,8 +444,14 @@
       // When ready call API to get all event data
       ready: function(){
         // call function to get video first, display this then get events
-        this.$.requestEvents.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/events";
-        this.$.requestEvents.generateRequest();
+
+        // request events (replaced by get Eras)
+        //this.$.requestEvents.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/events";
+        //this.$.requestEvents.generateRequest();
+
+        // request Eras
+        this.$.requestEras.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/eras";
+        this.$.requestEras.generateRequest();
 
         // open the filters toast
         //this.$.toastFilters.open();
@@ -386,27 +501,45 @@
           console.log(data.detail.response);
           this.events = data.detail.response;
       },
-      // Event sorting fucntion
+      // Handles data being returned from the API call to get eras
+      handleResponseEras: function (data) {
+          console.log(data.detail.response);
+          this.eras = data.detail.response;
+      },
+      // Event sorting function
       sortEvents: function (a, b) {
+          return parseFloat(b.from) - parseFloat(a.from);
+      },
+      // Era sorting function
+      sortEras: function (a, b) {
           return parseFloat(b.from) - parseFloat(a.from);
       },
       // Toggle event cards visibility based on event types
       handleFilter: function(e) {
-        console.log("args : " + e.target.dataset.args);
-        var filter = e.target.dataset.args;
-        //this.$.filter.toggle();
-        if (filter == "1_1 admin") {
-          console.log("hide");
-          this.$.info.hidden = true;
-        } else {
-          console.log("show");
-          this.$.info.hidden = false;
-        }
+        var filter = "--display" + e.target.dataset.args;
+        var selector = '#' + e.target.dataset.args;
 
+        //console.log("custom display style : " + this.getComputedStyleValue('--testcolour1'));
+        console.log("filter : " + filter);
+        console.log("calculated display style : " + this.getComputedStyleValue(filter));
+
+/*
+        if (this.getComputedStyleValue(filter) == "flex") {
+          console.log("hide " + e.target.dataset.args);
+          this.customStyle[filter] = "none";
+          this.updateStyles();
+        } else {
+          console.log("show " + e.target.dataset.args);
+          this.customStyle[filter] = "flex";
+          this.updateStyles();
+        }
+*/
+          this.customStyle["--test1_1"] = "none";
+          this.updateStyles();
       },
       // Toggle event card collapse on tap based on ID
       handleEventCollapse: function(event, detail, sender) {
-        var id = event.model.item.id;
+        var id = event.model.eventItem.id;
         var selector = '#collapse' + id;
         var commentDiv = '#comment' + id;
         var associationsDiv = '#associations' + id;
@@ -422,14 +555,14 @@
       // Toggle association card collapse on tap based on ID
       handleAssociationCollapse: function(event, detail, sender) {
         //console.log("association id" + event.model.association.id);
-        var id = event.model.item.id;
+        var id = event.model.eventItem.id;
         var associationId = event.model.association.id;
         var card = '#associationCollapse' + id + associationId;
         this.$$(card).toggle();
       },
       handleEventComment: function(event, detail, sender) {
         //console.log("comment tap event");
-        var id = event.model.item.id;
+        var id = event.model.eventItem.id;
         console.log("open comment dialog for event : " + id);
         var dialog = '#commentDialog' + id;
         this.$$(dialog).open();
@@ -437,14 +570,14 @@
       // Open carousel dialog when full screen button is tapped
       handleEventCarousel: function(event, detail, sender) {
         console.log("full screen tap event");
-        var id = event.model.item.id;
+        var id = event.model.eventItem.id;
         console.log("open image carousel dialog for event : " + id);
         var dialog = '#carouselDialog' + id;
         this.$$(dialog).open();
       },
       // Handle response from API after comment, display message close dialog on success.
       handleResponseComment: function (data) {
-        var id = event.model.item.id;
+        var id = event.model.eventItem.id;
         console.log("close comment dialog for event : " + id);
         console.log("comment response : " + JSON.stringify(data.detail.response));
         console.log("comment response id " + data.detail.response.id);
@@ -480,49 +613,49 @@
       eventColour: function (type) {
         var c;
         switch (type) {
-          case "1_1 admin":
+          case "_1_1_admin":
               c = "#5677FC";
               break;
-          case "1_2 campus":
+          case "_1_2_campus":
               c = "#5677FC";
               break;
-          case "1_3 students":
+          case "_1_3_students":
               c = "#5677FC";
               break;
-          case "1_4 teaching":
+          case "_1_4_teaching":
               c = "#5677FC";
               break;
 
-          case "2_1 art and design":
+          case "_2_1_art_and_design":
               c = "#EC407A";
               break;
-          case "2_2 science and technology":
+          case "_2_2_science_and_technology":
               c = "#EC407A";
               break;
-          case "2_3 business":
+          case "_2_3_business":
               c = "#EC407A";
               break;
-          case "2_4 research":
+          case "_2_4_research":
               c = "#EC407A";
               break;
-          case "2_5 multidisciplinarity":
+          case "_2_5_multidisciplinarity":
               c = "#EC407A";
               break;
 
-          case "3_1 entrepreneurship":
+          case "_3_1_entrepreneurship":
               c = "#FF9800";
               break;
-          case "3_2 corporate collaboration":
+          case "_3_2_corporate_collaboration":
               c = "#FF9800";
               break;
-          case "3_3 academic collaboration":
+          case "_3_3_academic_collaboration":
               c = "#FF9800";
               break;
 
-          case "4_1 global event":
+          case "_4_1_global_event":
               c = "#7ED321";
               break;
-          case "4_2 regional event":
+          case "_4_2_regional_event":
               c = "#7ED321";
               break;
 

@@ -3199,165 +3199,172 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
     </div>
 
     
-
     
-    <template is="dom-repeat" items="{{events}}" sort="sortEvents">
+    <template is="dom-repeat" items="{{eras}}" sort="sortEras">
 
-    
-      <div class="campus">
-        <div class="container flex-horizontal">
+      <div class="era">
 
         
-        <div class="year">
-          <template is="dom-if" if="{{yearIsFirstInDecade(item.from)}}">
-            <div style="font-weight: bold">{{eventYear(item.from)}}</div>
-          </template>
-          <template is="dom-if" if="{{!yearIsFirstInDecade(item.from)}}">
-            {{eventYear(item.from)}}
-          </template>
-        </div>
+        <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
         
-        
-          <div class="commentColumn">
-            <div class="comment" id$="comment{{item.id}}" style="display: none">
-              <div class="flexchild">
+          <div class="campus">  
 
-                 <div class="comment-container">
+            <div class="container flex-horizontal">
 
-                    <div class="comment-icon">
-                      <iron-icon icon="comment"></iron-icon>
-                    </div>
-
-                    <div class="comment-text">
-                      <template is="dom-repeat" items="{{item.latestPublicComments}}" as="comment">
-                        <p>{{comment.notes}}</p>
-                        <p style="font-size: 11px">{{comment.name}}</p>
-                      </template>
-                    </div>
-
-                </div>
-
-              </div>
-              <div class="leftArrow">
-                <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px">
-              </div>
+            
+            <div class="year">
+              <template is="dom-if" if="{{yearIsFirstInDecade(eventItem.from)}}">
+                <div style="font-weight: bold">{{eventYear(eventItem.from)}}</div>
+              </template>
+              <template is="dom-if" if="{{!yearIsFirstInDecade(eventItem.from)}}">
+                {{eventYear(eventItem.from)}}
+              </template>
             </div>
-          </div>
-        
 
-        
-        <div class="flexchild">
-          <paper-card>
-            <div class="event" id="event">
-              <div class="event-header" style$="background-color: [[eventColour(item.type)]];">
-                <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                  <iron-icon src="/pictures/{{item.type}}.svg" style="margin-right: 8px"></iron-icon>
-                  <span class="buttontext">{{item.name}}</span>
-                </paper-button>
-              </div>
-              <iron-collapse id$="collapse{{item.id}}" style$="width:100%;">
-                  
-                  <template is="dom-if" if="{{!arrayEmpty(item.images)}}">
-                    <div class="event-image">
-                      <iron-image style="width: 100%; height: 240px" sizing="cover" src="[[item.images.0.url]]"></iron-image>
-                      
+            
+            
+              <div class="commentColumn">
+                <div class="comment" id$="comment{{eventItem.id}}" style="display: none">
+                  <div class="flexchild">
 
-                      <paper-icon-button src="/pictures/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                     <div class="comment-container">
 
-                      <paper-dialog id="carouselDialog[[item.id]]" class="carousel-dialog" modal="">
-
-
-
-                        <image-slider images="{{formatImageArray(item.images)}}" captions="{{formatCaptionArray(item.images)}}"></image-slider>
-                        
-                          <paper-icon-button class="closeButton" src="/pictures/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
-                        
-                      </paper-dialog>
-
-                    </div>
-                  </template>
-
-                  
-
-                  <div class="event-text">
-                     
-                     <p style="white-space: pre-line">{{item.notes}}
-                     </p>
-                  </div>
-                  <div class="event-footer">
-                       <paper-button on-tap="handleEventComment">Comment</paper-button>
-
-                      
-
-                      <paper-dialog id="commentDialog[[item.id]]" modal="">
-                        <p>Please enter your name, email and comment below.</p>
-                        <form is="iron-form" id="form[[item.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
-                              <paper-input name="name" label="Name" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
-                              <paper-input name="email" label="Email" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
-                              <paper-input name="notes" label="Comment" char-counter="" maxlength="160" auto-validate="" error-message="Please enter a comment"></paper-input>
-                              <input type="hidden" name="commentedItemId" value="[[item.id]]">
-                              <br>
-                              <paper-button dialog-dismiss="">Cancel</paper-button>
-                              <paper-button raised="" autofocus="" on-tap="submitForm">Submit</paper-button>
-                        </form>
-                        <div class="buttons">
-
+                        <div class="comment-icon">
+                          <iron-icon icon="comment"></iron-icon>
                         </div>
 
-                      </paper-dialog>
-
-                  </div>
-              </iron-collapse>
-            </div>
-          </paper-card>
-        </div>
-
-        
-        <div class="flexchild">
-          <div class="associationColumn">
-            <div class="associations" id$="associations{{item.id}}" style="display: none">
-              <div class="rightArrow">
-                <img src="/pictures/arrowRight.png" style="position: relative; top: 0; left: 0; margin: 12px">
-              </div>
-              <div class="flexchild">
-                <template is="dom-repeat" items="{{item.associatedItems}}" as="association">
-                  <paper-card>
-                    <div class="association">
-                      <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
-                        <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
-                          
-                          <iron-icon src="/pictures/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
-                          <span class="buttontext">{{association.name}}</span>
-                        </paper-button>
-                      </div>
-                      <iron-collapse id$="associationCollapse{{item.id}}{{association.id}}" style="width:100%">
-
-                          <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
-                            <div class="association-image">
-                              <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
-
-                            </div>
+                        <div class="comment-text">
+                          <template is="dom-repeat" items="{{eventItem.latestPublicComments}}" as="comment">
+                            <p>{{comment.notes}}</p>
+                            <p style="font-size: 11px">{{comment.name}}</p>
                           </template>
-
-                          <div class="association-text">
-                             
-                             <p>{{association.notes}}</p>
-                          </div>
-                      </iron-collapse>
+                        </div>
 
                     </div>
-                  </paper-card>
-                </template>
+
+                  </div>
+                  <div class="leftArrow">
+                    <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px">
+                  </div>
+                </div>
+              </div>
+            
+
+            
+            <div class="flexchild">
+              <paper-card>
+                <div class="event" id="event">
+                  <div class="event-header" style$="background-color: [[eventColour(eventItem.type)]];">
+                    <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
+                      <iron-icon src="/pictures/{{eventItem.type}}.svg" style="margin-right: 8px"></iron-icon>
+                      <span class="buttontext">{{eventItem.name}}</span>
+                    </paper-button>
+                  </div>
+                  <iron-collapse id$="collapse{{eventItem.id}}" style$="width:100%;">
+                      
+                      <template is="dom-if" if="{{!arrayEmpty(eventItem.images)}}">
+                        <div class="event-image">
+                          <iron-image style="width: 100%; height: 240px" sizing="cover" src="[[eventItem.images.0.url]]"></iron-image>
+                          
+
+                          <paper-icon-button src="/pictures/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+
+                          <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal="">
+
+
+
+                            <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
+                            
+                              <paper-icon-button class="closeButton" src="/pictures/close.svg" dialog-confirm="" autofocus=""></paper-icon-button>
+                            
+                          </paper-dialog>
+
+                        </div>
+                      </template>
+
+                      
+
+                      <div class="event-text">
+                         
+                         <p style="white-space: pre-line">{{eventItem.notes}}
+                         </p>
+                      </div>
+                      <div class="event-footer">
+                           <paper-button on-tap="handleEventComment">Comment</paper-button>
+
+                          
+
+                          <paper-dialog id="commentDialog[[eventItem.id]]" modal="">
+                            <p>Please enter your name, email and comment below.</p>
+                            <form is="iron-form" id="form[[eventItem.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
+                                  <paper-input name="name" label="Name" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
+                                  <paper-input name="email" label="Email" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
+                                  <paper-input name="notes" label="Comment" char-counter="" maxlength="160" auto-validate="" error-message="Please enter a comment"></paper-input>
+                                  <input type="hidden" name="commentedItemId" value="[[eventItem.id]]">
+                                  <br>
+                                  <paper-button dialog-dismiss="">Cancel</paper-button>
+                                  <paper-button raised="" autofocus="" on-tap="submitForm">Submit</paper-button>
+                            </form>
+                            <div class="buttons">
+
+                            </div>
+
+                          </paper-dialog>
+
+                      </div>
+                  </iron-collapse>
+                </div>
+              </paper-card>
+            </div>
+
+            
+            <div class="flexchild">
+              <div class="associationColumn">
+                <div class="associations" id$="associations{{eventItem.id}}" style="display: none">
+                  <div class="rightArrow">
+                    <img src="/pictures/arrowRight.png" style="position: relative; top: 0; left: 0; margin: 12px">
+                  </div>
+                  <div class="flexchild">
+                    <template is="dom-repeat" items="{{eventItem.associatedItems}}" as="association">
+                      <paper-card>
+                        <div class="association">
+                          <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
+                            <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none">
+                              
+                              <iron-icon src="/pictures/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
+                              <span class="buttontext">{{association.name}}</span>
+                            </paper-button>
+                          </div>
+                          <iron-collapse id$="associationCollapse{{eventItem.id}}{{association.id}}" style="width:100%">
+
+                              <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
+                                <div class="association-image">
+                                  <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
+
+                                </div>
+                              </template>
+
+                              <div class="association-text">
+                                 
+                                 <p>{{association.notes}}</p>
+                              </div>
+                          </iron-collapse>
+
+                        </div>
+                      </paper-card>
+                    </template>
+                  </div>
+                </div>
               </div>
             </div>
+
+            </div>
           </div>
-        </div>
+
+          </template>
 
         </div>
-      </div>
-
-
 
     </template>
 
@@ -3373,12 +3380,13 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
     
 
     
-    <iron-ajax id="requestEvents" url="" handle-as="json" on-response="handleResponseEvents">
+    
+    <iron-ajax id="requestEras" url="" handle-as="json" on-response="handleResponseEras">
     </iron-ajax>
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEvents.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/events",this.$.requestEvents.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){console.log("args : "+e.target.dataset.args);var t=e.target.dataset.args;"1_1 admin"==t?(console.log("hide"),this.$.info.hidden=!0):(console.log("show"),this.$.info.hidden=!1)},handleEventCollapse:function(e,t,n){var a=e.model.item.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.item.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.item.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.item.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.item.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){console.log("args : "+e.target.dataset.args);var t=e.target.dataset.args;"1_1 admin"==t?(console.log("hide"),this.$.info.hidden=!0):(console.log("show"),this.$.info.hidden=!1)},handleEventCollapse:function(e,t,n){var a=e.model.eventItem.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.eventItem.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"1_1 admin":t="#5677FC";break;case"1_2 campus":t="#5677FC";break;case"1_3 students":t="#5677FC";break;case"1_4 teaching":t="#5677FC";break;case"2_1 art and design":t="#EC407A";break;case"2_2 science and technology":t="#EC407A";break;case"2_3 business":t="#EC407A";break;case"2_4 research":t="#EC407A";break;case"2_5 multidisciplinarity":t="#EC407A";break;case"3_1 entrepreneurship":t="#FF9800";break;case"3_2 corporate collaboration":t="#FF9800";break;case"3_3 academic collaboration":t="#FF9800";break;case"4_1 global event":t="#7ED321";break;case"4_2 regional event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
 
 </dom-module>
 </body></html>

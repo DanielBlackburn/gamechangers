@@ -5,7 +5,5 @@
 <style type="text/css">
 	.st0{fill:#FFFFFF;}
 </style>
-<rect x="-225.2" y="2492.7" transform="matrix(0.7075 -0.7067 0.7067 0.7075 -1833.9662 574.2668)" class="st0" width="4" height="20"/>
-<rect x="-227.3" y="2492.2" transform="matrix(0.7072 0.707 -0.707 0.7072 1698.0702 888.1448)" class="st0" width="8" height="4"/>
-<rect x="-235.7" y="2500.7" transform="matrix(0.7071 0.7071 -0.7071 0.7071 1701.8286 896.9023)" class="st0" width="8" height="4"/>
+<path class="st0" d="M-221,2495l2.3,2.3l-4.9,4.9l-4-4l-7.4,7.4l1.4,1.4l6-6l4,4l6.3-6.3l2.3,2.3v-6H-221z"/>
 </svg>
