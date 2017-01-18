@@ -5,7 +5,7 @@
   "sourceGlobs": [
    "src/**/*",
    "pictures/**/*",
-   "icons/**/*",
+   "icns/**/*",
    "bower.json"
   ],
   "includeDependencies": [
