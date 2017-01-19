@@ -34,22 +34,6 @@
         padding: 0px;
         overflow: hidden;
 
-        --testcolour1: #00ff00;
-        --display1_1: flex;
-        --display1_2: flex;
-        --display1_3: flex;
-        --display1_4: flex;
-        --display2_1: flex;
-        --display2_2: flex;
-        --display2_3: flex;
-        --display2_4: flex;
-        --display2_5: flex;
-        --display3_1: flex;
-        --display3_2: flex;
-        --display3_3: flex;
-        --display4_1: flex;
-        --display4_1: flex;
-
         iron-image {
           --iron-image-width: 100%;
         }
@@ -83,69 +67,67 @@
       }
 
       .era {
-
-      }
-
-      .campus{
-        display: var(--customdisplay, flex);
-
+          
       }
 
       ._1_1_admin{
-        display: var(--test1_1, flex);
-
+        display: var(--display1_1, inline);
+        background-color: white;
       }
 
       ._1_2_campus{
-        display: var(--test1_2, flex);
+        display: var(--display1_2, inline);
+        background-color: green;
       }
 
       ._1_3_students{
-        display: var(--test1_3, flex);
+        display: var(--display1_3, inline);
+        background-color: blue;
       }
 
       ._1_4_teaching{
-        display: var(--test1_4, flex);
+        display: var(--display1_4, inline);
+        background-color: red;
       }
 
       ._2_1_art_and_design{
-        display: var(--display2_1);
+        display: var(--display2_1, inline);
       }
 
       ._2_2_science_and_technology{
-        display: var(--display2_2);
+        display: var(--display2_2, inline);
       }
 
       ._2_3_business{
-        display: var(--display2_3);
+        display: var(--display2_3, inline);
       }
 
       ._2_4_research{
-        display: var(--display2_4);
+        display: var(--display2_4, inline);
       }
 
       ._2_5_multidisciplinarity{
-        display: var(--display2_5);
+        display: var(--display2_5, inline);
       }
 
       ._3_1_entrepreneurship{
-        display: var(--display3_1);
+        display: var(--display3_1, inline);
       }
 
       ._3_2_corporate_collaboration{
-        display: var(--display3_2);
+        display: var(--display3_2, inline);
       }
 
       ._3_3_academic_collaboration{
-        display: var(--display3_3);
+        display: var(--display3_3, inline);
       }
 
       ._4_1_global_event{
-        display: var(--display4_1);
+        display: var(--display4_1, inline);
       }
 
       ._4_2_regional_event{
-        display: var(--display4_2);
+        display: var(--display4_2, inline);
       }
 
     </style>
@@ -202,10 +184,9 @@
         <!-- Events template -->
         <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
-          <!-- <div class="{{eventItem.type}}"> -->
-            <div class="_1_1_admin">
+          <div class$="[[eventItem.type]]">
 
-            <div class="container flex-horizontal">
+           <div class="container flex-horizontal">
 
             <!-- Column 1 - the year/decade -->
             <div class="year">
@@ -358,7 +339,7 @@
               </div>
             </div>
 
-            </div>
+           </div>
           </div>
 
           </template>
@@ -369,7 +350,7 @@
 
     <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
     <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1" style="background-color: green;"></paper-icon-button>
+      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
       <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
       <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
       <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
@@ -439,6 +420,62 @@
         version: {
           type: String,
           value: 'v2'
+        },
+        filter1_1: {
+          type: Boolean,
+          value: true
+        },
+        filter1_2: {
+          type: Boolean,
+          value: true
+        },
+        filter1_3: {
+          type: Boolean,
+          value: true
+        },
+        filter1_4: {
+          type: Boolean,
+          value: true
+        },
+        filter2_1: {
+          type: Boolean,
+          value: true
+        },
+        filter2_2: {
+          type: Boolean,
+          value: true
+        },
+        filter2_3: {
+          type: Boolean,
+          value: true
+        },
+        filter2_4: {
+          type: Boolean,
+          value: true
+        },
+        filter2_5: {
+          type: Boolean,
+          value: true
+        },
+        filter3_1: {
+          type: Boolean,
+          value: true
+        },
+        filter3_2: {
+          type: Boolean,
+          value: true
+        },
+        filter3_3: {
+          type: Boolean,
+          value: true
+        },
+        filter4_1: {
+          type: Boolean,
+          value: true
+        },
+        filter4_2: {
+          type: Boolean,
+          value: true
         }
       },
       // When ready call API to get all event data
@@ -454,7 +491,7 @@
         this.$.requestEras.generateRequest();
 
         // open the filters toast
-        //this.$.toastFilters.open();
+        this.$.toastFilters.open();
 
         // test code
         //this.$.bottom.scrollIntoView();
@@ -517,25 +554,68 @@
       // Toggle event cards visibility based on event types
       handleFilter: function(e) {
         var filter = "--display" + e.target.dataset.args;
-        var selector = '#' + e.target.dataset.args;
-
-        //console.log("custom display style : " + this.getComputedStyleValue('--testcolour1'));
-        console.log("filter : " + filter);
-        console.log("calculated display style : " + this.getComputedStyleValue(filter));
-
-/*
-        if (this.getComputedStyleValue(filter) == "flex") {
-          console.log("hide " + e.target.dataset.args);
-          this.customStyle[filter] = "none";
-          this.updateStyles();
-        } else {
-          console.log("show " + e.target.dataset.args);
-          this.customStyle[filter] = "flex";
-          this.updateStyles();
+        var d;
+        switch (e.target.dataset.args) {
+          case "1_1":
+              d = this.filter1_1 ? "none" : "inline";
+              this.filter1_1 = !this.filter1_1;
+              break;
+          case "1_2":
+              d = this.filter1_2 ? "none" : "inline";
+              this.filter1_2 = !this.filter1_2;
+              break;
+          case "1_3":
+              d = this.filter1_3 ? "none" : "inline";
+              this.filter1_3 = !this.filter1_3;
+              break;
+          case "1_4":
+              d = this.filter1_4 ? "none" : "inline";
+              this.filter1_4 = !this.filter1_4;
+              break;
+          case "2_1":
+              d = this.filter2_1 ? "none" : "inline";
+              this.filter2_1 = !this.filter2_1;
+              break;
+          case "2_2":
+              d = this.filter2_2 ? "none" : "inline";
+              this.filter2_2 = !this.filter2_2;
+              break;
+          case "2_3":
+              d = this.filter2_3 ? "none" : "inline";
+              this.filter2_3 = !this.filter2_3;
+              break;
+          case "2_4":
+              d = this.filter2_4 ? "none" : "inline";
+              this.filter2_4 = !this.filter2_4;
+              break;
+          case "2_5":
+              d = this.filter2_5 ? "none" : "inline";
+              this.filter2_5 = !this.filter2_5;
+              break;
+          case "3_1":
+              d = this.filter3_1 ? "none" : "inline";
+              this.filter3_1 = !this.filter3_1;
+              break;
+          case "3_2":
+              d = this.filter3_2 ? "none" : "inline";
+              this.filter3_2 = !this.filter3_2;
+              break;
+          case "3_3":
+              d = this.filter3_3 ? "none" : "inline";
+              this.filter3_3 = !this.filter3_3;
+              break;
+          case "4_1":
+              d = this.filter4_1 ? "none" : "inline";
+              this.filter4_1 = !this.filter4_1;
+              break;
+          case "4_2":
+              d = this.filter4_2 ? "none" : "inline";
+              this.filter4_2 = !this.filter4_2;
+              break;
         }
-*/
-          this.customStyle["--test1_1"] = "none";
-          this.updateStyles();
+        //console.log("filter : " + filter + " equals " + d);
+        this.customStyle[filter] = d;
+        this.updateStyles();
       },
       // Toggle event card collapse on tap based on ID
       handleEventCollapse: function(event, detail, sender) {

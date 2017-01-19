@@ -33,22 +33,6 @@
         padding: 0px;
         overflow: hidden;
 
-        --testcolour1: #00ff00;
-        --display1_1: flex;
-        --display1_2: flex;
-        --display1_3: flex;
-        --display1_4: flex;
-        --display2_1: flex;
-        --display2_2: flex;
-        --display2_3: flex;
-        --display2_4: flex;
-        --display2_5: flex;
-        --display3_1: flex;
-        --display3_2: flex;
-        --display3_3: flex;
-        --display4_1: flex;
-        --display4_1: flex;
-
         iron-image {
           --iron-image-width: 100%;
         }
@@ -82,69 +66,67 @@
       }
 
       .era {
-
-      }
-
-      .campus{
-        display: var(--customdisplay, flex);
-
+          
       }
 
       ._1_1_admin{
-        display: var(--test1_1, flex);
-
+        display: var(--display1_1, inline);
+        background-color: white;
       }
 
       ._1_2_campus{
-        display: var(--test1_2, flex);
+        display: var(--display1_2, inline);
+        background-color: green;
       }
 
       ._1_3_students{
-        display: var(--test1_3, flex);
+        display: var(--display1_3, inline);
+        background-color: blue;
       }
 
       ._1_4_teaching{
-        display: var(--test1_4, flex);
+        display: var(--display1_4, inline);
+        background-color: red;
       }
 
       ._2_1_art_and_design{
-        display: var(--display2_1);
+        display: var(--display2_1, inline);
       }
 
       ._2_2_science_and_technology{
-        display: var(--display2_2);
+        display: var(--display2_2, inline);
       }
 
       ._2_3_business{
-        display: var(--display2_3);
+        display: var(--display2_3, inline);
       }
 
       ._2_4_research{
-        display: var(--display2_4);
+        display: var(--display2_4, inline);
       }
 
       ._2_5_multidisciplinarity{
-        display: var(--display2_5);
+        display: var(--display2_5, inline);
       }
 
       ._3_1_entrepreneurship{
-        display: var(--display3_1);
+        display: var(--display3_1, inline);
       }
 
       ._3_2_corporate_collaboration{
-        display: var(--display3_2);
+        display: var(--display3_2, inline);
       }
 
       ._3_3_academic_collaboration{
-        display: var(--display3_3);
+        display: var(--display3_3, inline);
       }
 
       ._4_1_global_event{
-        display: var(--display4_1);
+        display: var(--display4_1, inline);
       }
 
       ._4_2_regional_event{
-        display: var(--display4_2);
+        display: var(--display4_2, inline);
       }
 
     </style>
@@ -194,10 +176,9 @@
         
         <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
-          
-            <div class="_1_1_admin">
+          <div class$="[[eventItem.type]]">
 
-            <div class="container flex-horizontal">
+           <div class="container flex-horizontal">
 
             
             <div class="year">
@@ -346,7 +327,7 @@
               </div>
             </div>
 
-            </div>
+           </div>
           </div>
 
           </template>
@@ -357,7 +338,7 @@
 
     
     <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1" style="background-color: green"></paper-icon-button>
+      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
       <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
       <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
       <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
@@ -382,7 +363,7 @@
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){var t="--display"+e.target.dataset.args;"#"+e.target.dataset.args;console.log("filter : "+t),console.log("calculated display style : "+this.getComputedStyleValue(t)),this.customStyle["--test1_1"]="none",this.updateStyles()},handleEventCollapse:function(e,t,n){var a=e.model.eventItem.id,o="#collapse"+a,s="#comment"+a,r="#associations"+a;this.$$(o).opened?(this.$$(s).style.display="none",this.$$(r).style.display="none"):(this.$$(s).style.display="flex",this.$$(r).style.display="flex"),this.$$(o).toggle()},handleAssociationCollapse:function(e,t,n){var a=e.model.eventItem.id,o=e.model.association.id,s="#associationCollapse"+a+o;this.$$(s).toggle()},handleEventComment:function(e,t,n){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var o="#commentDialog"+a;this.$$(o).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var o="#carouselDialog"+a;this.$$(o).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"_1_1_admin":t="#5677FC";break;case"_1_2_campus":t="#5677FC";break;case"_1_3_students":t="#5677FC";break;case"_1_4_teaching":t="#5677FC";break;case"_2_1_art_and_design":t="#EC407A";break;case"_2_2_science_and_technology":t="#EC407A";break;case"_2_3_business":t="#EC407A";break;case"_2_4_research":t="#EC407A";break;case"_2_5_multidisciplinarity":t="#EC407A";break;case"_3_1_entrepreneurship":t="#FF9800";break;case"_3_2_corporate_collaboration":t="#FF9800";break;case"_3_3_academic_collaboration":t="#FF9800";break;case"_4_1_global_event":t="#7ED321";break;case"_4_2_regional_event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),a=n.toString(),o=a.substr(a.length-1);return"0"==o}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},languauge:{type:String,value:"fi"},version:{type:String,value:"v2"},filter1_1:{type:Boolean,value:!0},filter1_2:{type:Boolean,value:!0},filter1_3:{type:Boolean,value:!0},filter1_4:{type:Boolean,value:!0},filter2_1:{type:Boolean,value:!0},filter2_2:{type:Boolean,value:!0},filter2_3:{type:Boolean,value:!0},filter2_4:{type:Boolean,value:!0},filter2_5:{type:Boolean,value:!0},filter3_1:{type:Boolean,value:!0},filter3_2:{type:Boolean,value:!0},filter3_3:{type:Boolean,value:!0},filter4_1:{type:Boolean,value:!0},filter4_2:{type:Boolean,value:!0}},ready:function(){this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.languauge+"/eras",this.$.requestEras.generateRequest(),this.$.toastFilters.open()},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].url;return t},formatCaptionArray:function(e){for(var t=[],n=0;n<e.length;n++)t[n]=e[n].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEvents:function(e){console.log(e.detail.response),this.events=e.detail.response},handleResponseEras:function(e){console.log(e.detail.response),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){var t,n="--display"+e.target.dataset.args;switch(e.target.dataset.args){case"1_1":t=this.filter1_1?"none":"inline",this.filter1_1=!this.filter1_1;break;case"1_2":t=this.filter1_2?"none":"inline",this.filter1_2=!this.filter1_2;break;case"1_3":t=this.filter1_3?"none":"inline",this.filter1_3=!this.filter1_3;break;case"1_4":t=this.filter1_4?"none":"inline",this.filter1_4=!this.filter1_4;break;case"2_1":t=this.filter2_1?"none":"inline",this.filter2_1=!this.filter2_1;break;case"2_2":t=this.filter2_2?"none":"inline",this.filter2_2=!this.filter2_2;break;case"2_3":t=this.filter2_3?"none":"inline",this.filter2_3=!this.filter2_3;break;case"2_4":t=this.filter2_4?"none":"inline",this.filter2_4=!this.filter2_4;break;case"2_5":t=this.filter2_5?"none":"inline",this.filter2_5=!this.filter2_5;break;case"3_1":t=this.filter3_1?"none":"inline",this.filter3_1=!this.filter3_1;break;case"3_2":t=this.filter3_2?"none":"inline",this.filter3_2=!this.filter3_2;break;case"3_3":t=this.filter3_3?"none":"inline",this.filter3_3=!this.filter3_3;break;case"4_1":t=this.filter4_1?"none":"inline",this.filter4_1=!this.filter4_1;break;case"4_2":t=this.filter4_2?"none":"inline",this.filter4_2=!this.filter4_2}this.customStyle[n]=t,this.updateStyles()},handleEventCollapse:function(e,t,n){var i=e.model.eventItem.id,a="#collapse"+i,r="#comment"+i,s="#associations"+i;this.$$(a).opened?(this.$$(r).style.display="none",this.$$(s).style.display="none"):(this.$$(r).style.display="flex",this.$$(s).style.display="flex"),this.$$(a).toggle()},handleAssociationCollapse:function(e,t,n){var i=e.model.eventItem.id,a=e.model.association.id,r="#associationCollapse"+i+a;this.$$(r).toggle()},handleEventComment:function(e,t,n){var i=e.model.eventItem.id;console.log("open comment dialog for event : "+i);var a="#commentDialog"+i;this.$$(a).open()},handleEventCarousel:function(e,t,n){console.log("full screen tap event");var i=e.model.eventItem.id;console.log("open image carousel dialog for event : "+i);var a="#carouselDialog"+i;this.$$(a).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var n="#commentDialog"+t;this.$$(n).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"_1_1_admin":t="#5677FC";break;case"_1_2_campus":t="#5677FC";break;case"_1_3_students":t="#5677FC";break;case"_1_4_teaching":t="#5677FC";break;case"_2_1_art_and_design":t="#EC407A";break;case"_2_2_science_and_technology":t="#EC407A";break;case"_2_3_business":t="#EC407A";break;case"_2_4_research":t="#EC407A";break;case"_2_5_multidisciplinarity":t="#EC407A";break;case"_3_1_entrepreneurship":t="#FF9800";break;case"_3_2_corporate_collaboration":t="#FF9800";break;case"_3_3_academic_collaboration":t="#FF9800";break;case"_4_1_global_event":t="#7ED321";break;case"_4_2_regional_event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),n=t.getFullYear(),i=n.toString(),a=i.substr(i.length-1);return"0"==a}});</script>
 
 </dom-module>
 </body></html>
