@@ -5,7 +5,7 @@
 <!-- shared styles for all views -->
 <dom-module id="gc-styles">
   <template>
-    <style>
+    <style is="custom-style">
 
       .info {
         font-family: 'Roboto Condensed', sans-serif;
@@ -64,6 +64,12 @@
       }
       .flex3child {
         @apply(--layout-flex-3);
+      }
+
+      #spinner {
+        display: block;
+        margin: auto;
+        --paper-spinner-color:	#fff;
       }
 
       .year {
@@ -196,10 +202,9 @@
       }
 
       .commentColumn {
-        @apply(--layout-horizontal);
-        width: 240px;
-        min-width: 240px;
-        max-width: 240px;
+        width: auto;
+        min-width: 290px;
+        margin:0 auto;
       }
 
       .comment {
@@ -221,6 +226,7 @@
 
       .comment-text {
         width: 100%;
+        min-width: 194px;
         height: auto;
         font-size: 14px;
         line-height: 19px;
@@ -234,6 +240,107 @@
 
       p.comment-text {
         font-size: 14px;
+      }
+
+      .leftArrow {
+        min-width: 12px;
+      }
+
+      paper-dialog.carousel-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 50px;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      .closeButton {
+          position: absolute;
+          top: 0;
+          left: auto;
+          right: 0;
+          bottom: auto;
+          background-color: var(--paper-grey-300);
+          opacity: 0.75;
+          color: var(--paper-grey-700);
+          border-radius: 20px;
+          margin: 10px;
+          color: #fff;
+      }
+
+      .era {
+
+      }
+
+      ._1_1_admin{
+        display: var(--display1_1, inline);
+        background-color: white;
+      }
+
+      ._1_2_campus{
+        display: var(--display1_2, inline);
+        background-color: green;
+      }
+
+      ._1_3_students{
+        display: var(--display1_3, inline);
+        background-color: blue;
+      }
+
+      ._1_4_teaching{
+        display: var(--display1_4, inline);
+        background-color: red;
+      }
+
+      ._2_1_art_and_design{
+        display: var(--display2_1, inline);
+      }
+
+      ._2_2_science_and_technology{
+        display: var(--display2_2, inline);
+      }
+
+      ._2_3_business{
+        display: var(--display2_3, inline);
+      }
+
+      ._2_4_research{
+        display: var(--display2_4, inline);
+      }
+
+      ._2_5_multidisciplinarity{
+        display: var(--display2_5, inline);
+      }
+
+      ._3_1_entrepreneurship{
+        display: var(--display3_1, inline);
+      }
+
+      ._3_2_corporate_collaboration{
+        display: var(--display3_2, inline);
+      }
+
+      ._3_3_academic_collaboration{
+        display: var(--display3_3, inline);
+      }
+
+      ._4_1_global_event{
+        display: var(--display4_1, inline);
+      }
+
+      ._4_2_regional_event{
+        display: var(--display4_2, inline);
+      }
+
+      .menuButtons {
+        position: absolute;
+        right: 0;
+        top: 0;
+        color: white;
       }
 
     </style>

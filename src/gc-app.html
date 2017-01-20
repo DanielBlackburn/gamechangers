@@ -1,10 +1,13 @@
 <!-- Polymer elements -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
@@ -12,16 +15,14 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <!-- Community elements-->
 <link rel="import" href="../bower_components/parallax-container/parallax-container.html">
 <link rel="import" href="vimeo-player.html">
 <link rel="import" href="image-slider.html">
-<link rel="import" href="icon-toggle.html">
 <!-- Project elements-->
 <link rel="import" href="gc-icons.html">
 <link rel="import" href="gc-styles.html">
-
 
 <dom-module id="gc-app">
   <template>
@@ -29,163 +30,84 @@
       :host {
         --app-primary-color: white;
         --app-secondary-color: black;
-
         display: block;
         padding: 0px;
         overflow: hidden;
-
         iron-image {
           --iron-image-width: 100%;
         }
       }
     </style>
-    <style is="custom-style">
-      paper-dialog.carousel-dialog {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0;
-        margin: 50px;
-        overflow: hidden;
-        background-color: #000;
-      }
 
-      .closeButton {
-          position: absolute;
-          top: 0;
-          left: auto;
-          right: 0;
-          bottom: auto;
-          background-color: var(--paper-grey-300);
-          opacity: 0.75;
-          color: var(--paper-grey-700);
-          border-radius: 20px;
-          margin: 10px;
-          color: #fff;
-      }
+    <!-- Language settings local storage -->
+    <iron-localstorage
+      name="gamechangers-storage"
+      value="{{storage}}"
+      on-iron-localstorage-load-empty="initializeDefaultStorage"
+      on-iron-localstorage-load="handleLocalstorageLoadEvent"
+    ></iron-localstorage>
 
-      .era {
-          
-      }
-
-      ._1_1_admin{
-        display: var(--display1_1, inline);
-        background-color: white;
-      }
-
-      ._1_2_campus{
-        display: var(--display1_2, inline);
-        background-color: green;
-      }
-
-      ._1_3_students{
-        display: var(--display1_3, inline);
-        background-color: blue;
-      }
-
-      ._1_4_teaching{
-        display: var(--display1_4, inline);
-        background-color: red;
-      }
-
-      ._2_1_art_and_design{
-        display: var(--display2_1, inline);
-      }
-
-      ._2_2_science_and_technology{
-        display: var(--display2_2, inline);
-      }
-
-      ._2_3_business{
-        display: var(--display2_3, inline);
-      }
-
-      ._2_4_research{
-        display: var(--display2_4, inline);
-      }
-
-      ._2_5_multidisciplinarity{
-        display: var(--display2_5, inline);
-      }
-
-      ._3_1_entrepreneurship{
-        display: var(--display3_1, inline);
-      }
-
-      ._3_2_corporate_collaboration{
-        display: var(--display3_2, inline);
-      }
-
-      ._3_3_academic_collaboration{
-        display: var(--display3_3, inline);
-      }
-
-      ._4_1_global_event{
-        display: var(--display4_1, inline);
-      }
-
-      ._4_2_regional_event{
-        display: var(--display4_2, inline);
-      }
-
-    </style>
+    <!-- app route. used for deep linking -->
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:event_id"
+        data="{{routeData}}"
+        tail="{{subroute}}"
+    ></app-route>
 
 <!--    <parallax-container> -->
 
     <!-- Alpha message section above timeline -->
-    <div class="container flex-horizontal">
-      <div style="position: relative; left: 0; top: 0; min-width: 120px;">
-        <!-- <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px;"/> -->
-        <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px;"/>
+    <template is="dom-if" if="{{storageLoaded}}">
+
+      <!-- Language change and credits buttons -->
+      <div class="menuButtons">
+        <paper-button on-tap="changeLanguage">{{storage.label}}</paper-button>
+        <paper-button on-tap="openCreditsDialog">Credits</paper-button>
       </div>
-      <div class="flexchild">
-        <img src="/pictures/title_FIN.png" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
 
-          <div class="container flex-horizontal">
-            <div class="flexchild">
-              <!--
-              <h1 class="info">Welcome!</h1>
-              <p class="info">This is a timeline of events from the history of Aalto University and its predecessor schools, that has had an impact for the Finnish society. Here are some historical milestones together with a few impactful chain of events, but this is just a start. Now  we reach out to the community. That is you. Share your insight.</p>
+      <div class="container flex-horizontal">
+        <div style="position: relative; left: 0; top: 0; min-width: 120px;">
+          <!-- <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px;"/> -->
+          <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px;"/>
+        </div>
+        <div class="flexchild">
+          <img src="/pictures/{{localisedTitle()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
+            <div class="container flex-horizontal">
+              <div class="flexchild">
+                <h1 class="info">{{localisedH1()}}</h1>
+                <p class="info">{{localisedP1()}}</p>
+                </br>
+                <p class="info">{{localisedP2()}}</p>
+              </div>
+              <div class="flexchild">
+                <!-- Change this to be data driven, get latest video from the API -->
+                <h1 class="info">{{localisedVideoH1()}}</h1>
+                <vimeo-player id="videoOfTheMonth" videoid="39189423"></vimeo-player>
+                <p class="info"> </p>
+                <p class="info"> </p>
               </br>
-              <p class="info">Scroll down the time and suggest a topic you think should be included. Please remember that the perspective here is “a game changer”, so we are looking for themes that have been enablers for disruptions. You can also suggest an anecdote directly regarding an event on the timeline. Thank you for your help.</p>
-              -->
-              <h1 class="info">Tervetuloa!</h1>
-              <p class="info">Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen.</p>
-              </br>
-              <p class="info">Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jakaaksesi ajatuksesi liiku aikajanalla haluamaasi vuoteen ja ehdota lisättäväksi aihetta ja taustatietoja. Voit myös kirjoittaa kommenttikenttään anekdootteja jo kuvatuista aiheista. Odotamme panostasi, suurkiitos siitä etukäteen!</p>
-
+              </div>
             </div>
-
-            <div class="flexchild">
-              <!-- Change this to be data driven, get latest video from the API -->
-              <h1 class="info">Video of the month</h1>
-              <vimeo-player id="videoOfTheMonth" videoid="39189423"></vimeo-player>
-              <p class="info">Video Title</p>
-              <p class="info">Video Description</p>
-            </div>
-          </div>
-
+        </div>
       </div>
-    </div>
+    </template>
 
-    <!-- Spinner - hidden after data has loaded
-    <paper-spinner-lite class="orange" active></paper-spinner-lite>
-    -->
+    <!-- Spinner - hidden after data has loaded -->
+    <paper-spinner-lite active id="spinner" alt="Loading timeline"></paper-spinner-lite>
+
     <!-- Timeline template -->
-    <template is="dom-repeat" items="{{eras}}" sort="sortEras">
+    <div id="timeline" on-dom-change="eraDOM">
+    <template  is="dom-repeat" items="{{eras}}" sort="sortEras" >
 
       <div class="era" style="background:url([[item.images.0.url]]) no-repeat;">
-
         <p class="eraName"> {{item.name}} </p>
-        <!-- <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[item.images.0.url]]"></iron-image> -->
 
         <!-- Events template -->
         <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
-          <div class$="[[eventItem.type]]">
-
+          <div class$="[[eventItem.type]]" id$="eventDiv[[eventItem.id]]">
            <div class="container flex-horizontal">
 
             <!-- Column 1 - the year/decade -->
@@ -199,7 +121,7 @@
             </div>
 
             <!-- Column 2 - comments -->
-            <!-- <div class="flexchild"> -->
+            <div class="flexchild">
               <div class="commentColumn">
                 <div class="comment" id$="comment{{eventItem.id}}" style="display: none;">
                   <div class="flexchild">
@@ -225,7 +147,7 @@
                   </div>
                 </div>
               </div>
-            <!-- </div> -->
+            </div>
 
             <!-- Column 3 - events -->
             <div class="flexchild">
@@ -247,9 +169,6 @@
                           <paper-icon-button src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
 
                           <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal>
-
-
-
                             <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
                             <!-- <div class="buttons"> -->
                               <paper-icon-button class="closeButton" src="/icns/close.svg" dialog-confirm autofocus></paper-icon-button>
@@ -259,11 +178,10 @@
                         </div>
                       </template>
 
-                      <!-- Vimeo player embed test
-                      <template is="dom-if" if="{{arrayEmpty(eventItem.images)}}">
-                        <vimeo-player id="my-demo" videoid="39189423"></vimeo-player>
+                      <!-- Vimeo player embed test -->
+                      <template is="dom-if" if="{{eventItem.vimeoVideoId}}">
+                        <vimeo-player id="video{{eventItem.vimeoVideoId}}" videoid="{{eventItem.vimeoVideoId}}"></vimeo-player>
                       </template>
-                      -->
 
                       <div class="event-text">
                          <!-- <div inner-h-t-m-l="{{justText(eventItem.notes)}}"> </div> -->
@@ -274,7 +192,6 @@
                            <paper-button on-tap="handleEventComment">Comment</paper-button>
 
                           <!-- <paper-button raised onclick="modal{{eventItem.id}}.open()">Comment</paper-button> -->
-
                           <paper-dialog id="commentDialog[[eventItem.id]]" modal>
                             <p>Please enter your name, email and comment below.</p>
                             <form is="iron-form" id="form[[eventItem.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
@@ -289,7 +206,6 @@
                             <div class="buttons">
 
                             </div>
-
                           </paper-dialog>
 
                       </div>
@@ -347,6 +263,7 @@
         </div>
 
     </template>
+  </div>
 
     <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
     <paper-toast id="toastFilters" duration="0" text="Filters ">
@@ -368,13 +285,6 @@
 
     <!--    </parallax-container> -->
 
-    <!-- Initial call to get event data
-    <iron-ajax
-      id="requestEvents"
-      url=""
-      handle-as="json"
-      on-response="handleResponseEvents">
-    </iron-ajax> -->
     <!-- Initial call to get Era data -->
     <iron-ajax
       id="requestEras"
@@ -402,14 +312,22 @@
           value: 'https://deepamehta.aalto.fi'
         },
         /**
-        * Language setting fi=finnish en=english
+        * Language setting fi=finnish en=english NB USE LOCAL STORAGE INSTEAD
         * @attribute language
         * @type sting
         * @default fi
         */
-        languauge: {
+        language: {
           type: String,
           value: 'fi'
+        },
+        /**
+        * Local storage
+        * @attribute storage
+        * @type object
+        */
+        storage: {
+          type: Object
         },
         /**
         * API version string. v1, v2, etc.
@@ -420,6 +338,14 @@
         version: {
           type: String,
           value: 'v2'
+        },
+        storageLoaded: {
+          type: Boolean,
+          value: false
+        },
+        itemCount: {
+          type: Number,
+          value: 0
         },
         filter1_1: {
           type: Boolean,
@@ -481,20 +407,92 @@
       // When ready call API to get all event data
       ready: function(){
         // call function to get video first, display this then get events
-
-        // request events (replaced by get Eras)
-        //this.$.requestEvents.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/events";
-        //this.$.requestEvents.generateRequest();
-
+        this.itemCount = 0
+        // callback for timeline finishing loading
+        //console.log("route " + this.route);
+        //console.log("routeData " + this.routeData.event_id);
+/*
+        this.$.timeline.addEventListener("dom-change", function(event){
+          console.log("era dom change " + this.itemCount);
+          this.itemCount = this.itemCount + 1;
+          //console.log("eras total " + this.eras.length);
+        });
+*/
+      },
+      // Initialise local strage with default lang (fi)
+      initializeDefaultStorage: function() {
+        console.log("storage Init")
+        this.storage = {
+          lang: "fi",
+          label: "English"
+        }
+      },
+      // Once we have local settings we know the language, so load data
+      handleLocalstorageLoadEvent: function(){
+        console.log("local storage : @ storage load " + this.storage.lang);
+        this.language = this.storage.lang;
+        console.log("language property : @ storage load " + this.language);
+        this.storageLoaded = true;
         // request Eras
-        this.$.requestEras.url = this.domain + "/gamechangers/" + this.version + "/" + this.languauge + "/eras";
+        this.$.requestEras.url = this.domain + "/gamechangers/" + this.version + "/" + this.language + "/eras";
         this.$.requestEras.generateRequest();
+      },
+      // Toggle language between FI and EN then reload
+      changeLanguage: function() {
+        if (this.storage.lang == "fi") {
+          this.set('storage.lang', "en");
+          this.set('storage.label', "Suomeksi");
+          this.language = "en";
+        } else {
+          this.set('storage.lang', "fi");
+          this.set('storage.label', "English");
+          this.language = "fi";
+        }
+        location.reload(false);
+      },
+      // Called everytime era dom is changed
+      eraDOM: function(event) {
+        // Once the dom changes have stopped, stop spinner, show toast, etc.
+        this.debounce('doSomething', function () {
+          console.log('Debounce...');
+          this.$.spinner.active = false;
+          this.$.toastFilters.open();
+          // test code
 
-        // open the filters toast
-        this.$.toastFilters.open();
+          //var deep = "eventDiv" + 22167;
+          //var element = document.getElementById("eventDiv22880");
+          //element.scrollIntoView();
 
-        // test code
-        //this.$.bottom.scrollIntoView();
+          // open event if event id passed in route
+          if (this.routeData.event_id) {
+            console.log('Deep link...');
+            var deep = "#eventDiv" + this.routeData.event_id;
+            this.$$(deep).scrollIntoView();
+            var collapse = "#collapse" + this.routeData.event_id;
+            this.$$(collapse).toggle();
+            var commentDiv = '#comment' + this.routeData.event_id;
+            var associationsDiv = '#associations' + this.routeData.event_id;
+            this.$$(commentDiv).style.display='flex'
+            this.$$(associationsDiv).style.display='flex'
+          }
+
+        }, 300);
+      },
+      // UI Localisation functions
+      localisedTitle: function() {
+        return (this.language == "fi") ? "title_FIN.png" : "title.png";
+      },
+      localisedH1: function() {
+        return (this.language == "fi") ? "Tervetuloa!" : "Welcome!";
+      },
+      localisedP1: function() {
+        return (this.language == "fi") ? "Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen." : "This is a timeline of events from the history of Aalto University and its predecessor schools, that has had an impact for the Finnish society. Here are some historical milestones together with a few impactful chain of events, but this is just a start. Now  we reach out to the community. That is you. Share your insight.";
+      },
+      localisedP2: function() {
+        return (this.language == "fi") ? "Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jakaaksesi ajatuksesi liiku aikajanalla haluamaasi vuoteen ja ehdota lisättäväksi aihetta ja taustatietoja. Voit myös kirjoittaa kommenttikenttään anekdootteja jo kuvatuista aiheista. Odotamme panostasi, suurkiitos siitä etukäteen!" : "Scroll down the time and suggest a topic you think should be included. Please remember that the perspective here is “a game changer”, so we are looking for themes that have been enablers for disruptions. You can also suggest an anecdote directly regarding an event on the timeline. Thank you for your help.";
+      },
+      localisedVideoH1: function() {
+        return (this.language == "fi") ? "Kuukauden video" : "Video of the month";
       },
       // Function to check if an array is empty
       arrayEmpty: function(array) {
@@ -533,14 +531,9 @@
         console.log("domain in getCommentURL : " + this.domain);
         return this.domain + "/gamechangers/v1/comment";
       },
-      // Handles data being returned from the API call to get events
-      handleResponseEvents: function (data) {
-          console.log(data.detail.response);
-          this.events = data.detail.response;
-      },
       // Handles data being returned from the API call to get eras
       handleResponseEras: function (data) {
-          console.log(data.detail.response);
+          console.log("number of eras = " + data.detail.response.length);
           this.eras = data.detail.response;
       },
       // Event sorting function
@@ -678,10 +671,6 @@
           this.request.handleAs = 'json';
           //console.log(this.serialize());
         });
-        //form.addEventListener('iron-form-submit', function(event) {
-          //console.log("submit form function called");
-          //console.log (JSON.stringify(event.detail));
-        //});
         form.addEventListener('iron-form-error', function(event) {
           //console.log("comment form error response");
           alert ("Comment failed. Please make sure you entered your name, a comment and a valid email then try again");
