@@ -217,7 +217,9 @@
 
                       <div class="event-text">
                          <!-- <div inner-h-t-m-l="{{justText(eventItem.notes)}}"> </div> -->
-                         <p style="white-space: pre-line;">{{eventItem.notes}}
+                         <p>{{eventYear(eventItem.from)}}</p>
+                         <p style="font-style: bold;">{{eventItem.name}}</p>
+                         <p>{{eventItem.notes}}
                          </p>
                       </div>
                       <div class="event-footer">
@@ -248,16 +250,16 @@
 
             <!-- Column 4 - associations -->
             <div class="flexchild">
-              <div class="associationColumn">
-                <div class="associations" id$="associations{{eventItem.id}}" style="display: none;">
+              <div class="association-column">
+                <div class="events" id$="associations{{eventItem.id}}" style="display: none;">
                   <div class="rightArrow">
                     <img src="/pictures/arrowRight.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
                   </div>
                   <div class="flexchild">
                     <template is="dom-repeat" items="{{eventItem.associatedItems}}" as="association">
                       <paper-card>
-                        <div class="association">
-                          <div class="association-header" style$="background-color: {{eventColour(association.type)}};">
+                        <div class="event">
+                          <div class="event-header" style$="background-color: {{eventColour(association.type)}};">
                             <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
                               <!-- <iron-icon icon={{eventItem.type}} style="margin-right: 8px;"></iron-icon> -->
                               <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px;"></iron-icon>
@@ -267,7 +269,7 @@
                           <iron-collapse id$="associationCollapse{{eventItem.id}}{{association.id}}" style="width:100%;">
 
                               <template is="dom-if" if="{{!arrayEmpty(association.images)}}">
-                                <div class="association-image">
+                                <div class="event-image">
                                   <iron-image style="width: 100%; height: 240px" sizing="cover" src="{{association.images.0.url}}"></iron-image>
 
                                 </div>
@@ -280,11 +282,9 @@
                                 </div>
                               </template>
 
-                              <div class="association-title">
-                                  <p>{{association.name}} ({{{{eventYear(association.from)}}}})</p>
-                              </div>
-                              <div class="association-text">
-                                 <!-- <div inner-h-t-m-l="{{justText(association.notes)}}"></div> -->
+                              <div class="event-text">
+                                 <p>{{eventYear(association.from)}}</p>
+                                 <p style="font-style: bold;">{{association.name}}</p>
                                  <p>{{association.notes}}</p>
                               </div>
                           </iron-collapse>
@@ -815,49 +815,49 @@
         var c;
         switch (type) {
           case "_1_1_admin":
-              c = "#5677FC";
+              c = "#007DC8";
               break;
           case "_1_2_campus":
-              c = "#5677FC";
+              c = "#007DC8";
               break;
           case "_1_3_students":
-              c = "#5677FC";
+              c = "#007DC8";
               break;
           case "_1_4_teaching":
-              c = "#5677FC";
+              c = "#007DC8";
               break;
 
           case "_2_1_art_and_design":
-              c = "#EC407A";
+              c = "#BA269A";
               break;
           case "_2_2_science_and_technology":
-              c = "#EC407A";
+              c = "#BA269A";
               break;
           case "_2_3_business":
-              c = "#EC407A";
+              c = "#BA269A";
               break;
           case "_2_4_research":
-              c = "#EC407A";
+              c = "#BA269A";
               break;
           case "_2_5_multidisciplinarity":
-              c = "#EC407A";
+              c = "#BA269A";
               break;
 
           case "_3_1_entrepreneurship":
-              c = "#FF9800";
+              c = "#FF9A00";
               break;
           case "_3_2_corporate_collaboration":
-              c = "#FF9800";
+              c = "#FF9A00";
               break;
           case "_3_3_academic_collaboration":
-              c = "#FF9800";
+              c = "#FF9A00";
               break;
 
           case "_4_1_global_event":
-              c = "#7ED321";
+              c = "#6BB100";
               break;
           case "_4_2_regional_event":
-              c = "#7ED321";
+              c = "#6BB100";
               break;
 
           default:
