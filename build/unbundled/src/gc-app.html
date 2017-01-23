@@ -36,14 +36,25 @@
           --iron-image-width: 100%;
         }
       }
+
+      .video-of-the-month {
+        width: 90%;
+      }
+
+      .event-video {
+        width: 100%;
+      }
     </style>
 
     
     <iron-localstorage name="gamechangers-storage" value="{{storage}}" on-iron-localstorage-load-empty="initializeDefaultStorage" on-iron-localstorage-load="handleLocalstorageLoadEvent"></iron-localstorage>
 
     
-    <app-location route="{{route}}"></app-location>
-    <app-route route="{{route}}" pattern="/:event_id" data="{{routeData}}" tail="{{subroute}}"></app-route>
+    <app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
+
+    
+    <iron-ajax id="requestVideoOfTheMonth" url="https://deepamehta.aalto.fi/gamechangers/v1/featured_video" handle-as="json" on-response="handleResponseVideoOfTheMonth">
+    </iron-ajax>
 
 
 
@@ -54,6 +65,9 @@
       <div class="menuButtons">
         <paper-button on-tap="changeLanguage">{{storage.label}}</paper-button>
         <paper-button on-tap="openCreditsDialog">Credits</paper-button>
+        <paper-dialog id="creditsDialog">
+           <p>Credits and photo credits here</p>
+        </paper-dialog>
       </div>
 
       <div class="container flex-horizontal">
@@ -69,14 +83,31 @@
                 <p class="info">{{localisedP1()}}</p>
                 <br>
                 <p class="info">{{localisedP2()}}</p>
+                <br>
+                
+                <paper-dialog class="input-dialog" id="proposeDialog" modal="">
+                   <p>{{localisedProposeDescription()}}</p>
+                   <form is="iron-form" id="propose" method="post" content-type="application/json" action="{{getProposeURL}}" on-iron-form-response="handleResponsePropose">
+                         <paper-input name="name" label="{{localisedName()}}" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
+                         <paper-input name="email" label="{{localisedEmail()}}" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
+                         <paper-input name="notes" label="{{localisedPropose()}}" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your proposal"></paper-input>
+                         <br>
+                         <paper-button dialog-dismiss="">{{localisedCancel()}}</paper-button>
+                         <paper-button raised="" autofocus="" on-tap="submitProposal">{{localisedSubmit()}}</paper-button>
+                   </form>
+                </paper-dialog>
+                <br>
+                <br>
+                <h1 class="info">{{localisedVideoH1()}}</h1>
+                <div class="video-of-the-month">
+                  <vimeo-player id="videoOfTheMonth" videoid="{{videoOfTheMonth}}"></vimeo-player>
+                </div>
+                <p class="info"> </p>
+                <p class="info"> </p>
+                <br>
               </div>
               <div class="flexchild">
-                
-                <h1 class="info">{{localisedVideoH1()}}</h1>
-                <vimeo-player id="videoOfTheMonth" videoid="39189423"></vimeo-player>
-                <p class="info"> </p>
-                <p class="info"> </p>
-              <br>
+                <br>
               </div>
             </div>
         </div>
@@ -155,7 +186,7 @@
                           <iron-image style="width: 100%; height: 240px" sizing="cover" src="[[eventItem.images.0.url]]"></iron-image>
                           
 
-                          <paper-icon-button src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                          <paper-icon-button id="fullscreen-button" src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
 
                           <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal="">
                             <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
@@ -169,7 +200,9 @@
 
                       
                       <template is="dom-if" if="{{eventItem.vimeoVideoId}}">
-                        <vimeo-player id="video{{eventItem.vimeoVideoId}}" videoid="{{eventItem.vimeoVideoId}}"></vimeo-player>
+                        <div class="event-video">
+                          <vimeo-player id="video{{eventItem.vimeoVideoId}}" videoid="{{eventItem.vimeoVideoId}}"></vimeo-player>
+                        </div>
                       </template>
 
                       <div class="event-text">
@@ -181,16 +214,16 @@
                            <paper-button on-tap="handleEventComment">Comment</paper-button>
 
                           
-                          <paper-dialog id="commentDialog[[eventItem.id]]" modal="">
-                            <p>Please enter your name, email and comment below.</p>
+                          <paper-dialog class="input-dialog" id="commentDialog[[eventItem.id]]" modal="">
+                            <p>{{localisedCommentDescription()}}</p>
                             <form is="iron-form" id="form[[eventItem.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
-                                  <paper-input name="name" label="Name" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
-                                  <paper-input name="email" label="Email" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
-                                  <paper-input name="notes" label="Comment" char-counter="" maxlength="160" auto-validate="" error-message="Please enter a comment"></paper-input>
+                                  <paper-input name="name" label="{{localisedName()}}" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your name"></paper-input>
+                                  <paper-input name="email" label="{{localisedEmail()}}" char-counter="" maxlength="160" auto-validate="" error-message="Please enter your email"></paper-input>
+                                  <paper-input name="notes" label="{{localisedComment()}}" char-counter="" maxlength="160" auto-validate="" error-message="Please enter a comment"></paper-input>
                                   <input type="hidden" name="commentedItemId" value="[[eventItem.id]]">
                                   <br>
-                                  <paper-button dialog-dismiss="">Cancel</paper-button>
-                                  <paper-button raised="" autofocus="" on-tap="submitForm">Submit</paper-button>
+                                  <paper-button dialog-dismiss="">{{localisedCancel()}}</paper-button>
+                                  <paper-button raised="" autofocus="" on-tap="submitComment">{{localisedSubmit()}}</paper-button>
                             </form>
                             <div class="buttons">
 
@@ -230,6 +263,16 @@
                                 </div>
                               </template>
 
+                              
+                              <template is="dom-if" if="{{association.vimeoVideoId}}">
+                                <div class="event-video">
+                                  <vimeo-player id="video{{association.vimeoVideoId}}" videoid="{{association.vimeoVideoId}}"></vimeo-player>
+                                </div>
+                              </template>
+
+                              <div class="association-title">
+                                  <p>{{association.name}} ({{{{eventYear(association.from)}}}})</p>
+                              </div>
                               <div class="association-text">
                                  
                                  <p>{{association.notes}}</p>
@@ -254,22 +297,27 @@
     </template>
   </div>
 
+<br>
+<br>
+<br>
+<br>
+
     
-    <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
-      <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
-      <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
-      <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
-      <paper-icon-button id="2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
-      <paper-icon-button id="2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
-      <paper-icon-button id="2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
-      <paper-icon-button id="2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
-      <paper-icon-button id="2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
-      <paper-icon-button id="3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
-      <paper-icon-button id="3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
-      <paper-icon-button id="3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
-      <paper-icon-button id="4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
-      <paper-icon-button id="4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
+    <paper-toast id="toastFilters" duration="0" text="">
+      <paper-icon-button id="filter_button_1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
     </paper-toast>
 
     
@@ -280,7 +328,7 @@
 
   </template>
 
-  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},language:{type:String,value:"fi"},storage:{type:Object},version:{type:String,value:"v2"},storageLoaded:{type:Boolean,value:!1},itemCount:{type:Number,value:0},filter1_1:{type:Boolean,value:!0},filter1_2:{type:Boolean,value:!0},filter1_3:{type:Boolean,value:!0},filter1_4:{type:Boolean,value:!0},filter2_1:{type:Boolean,value:!0},filter2_2:{type:Boolean,value:!0},filter2_3:{type:Boolean,value:!0},filter2_4:{type:Boolean,value:!0},filter2_5:{type:Boolean,value:!0},filter3_1:{type:Boolean,value:!0},filter3_2:{type:Boolean,value:!0},filter3_3:{type:Boolean,value:!0},filter4_1:{type:Boolean,value:!0},filter4_2:{type:Boolean,value:!0}},ready:function(){this.itemCount=0},initializeDefaultStorage:function(){console.log("storage Init"),this.storage={lang:"fi",label:"English"}},handleLocalstorageLoadEvent:function(){console.log("local storage : @ storage load "+this.storage.lang),this.language=this.storage.lang,console.log("language property : @ storage load "+this.language),this.storageLoaded=!0,this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.language+"/eras",this.$.requestEras.generateRequest()},changeLanguage:function(){"fi"==this.storage.lang?(this.set("storage.lang","en"),this.set("storage.label","Suomeksi"),this.language="en"):(this.set("storage.lang","fi"),this.set("storage.label","English"),this.language="fi"),location.reload(!1)},eraDOM:function(e){this.debounce("doSomething",function(){if(console.log("Debounce..."),this.$.spinner.active=!1,this.$.toastFilters.open(),this.routeData.event_id){console.log("Deep link...");var e="#eventDiv"+this.routeData.event_id;this.$$(e).scrollIntoView();var t="#collapse"+this.routeData.event_id;this.$$(t).toggle();var i="#comment"+this.routeData.event_id,a="#associations"+this.routeData.event_id;this.$$(i).style.display="flex",this.$$(a).style.display="flex"}},300)},localisedTitle:function(){return"fi"==this.language?"title_FIN.png":"title.png"},localisedH1:function(){return"fi"==this.language?"Tervetuloa!":"Welcome!"},localisedP1:function(){return"fi"==this.language?"Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen.":"This is a timeline of events from the history of Aalto University and its predecessor schools, that has had an impact for the Finnish society. Here are some historical milestones together with a few impactful chain of events, but this is just a start. Now  we reach out to the community. That is you. Share your insight."},localisedP2:function(){return"fi"==this.language?"Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jakaaksesi ajatuksesi liiku aikajanalla haluamaasi vuoteen ja ehdota lisättäväksi aihetta ja taustatietoja. Voit myös kirjoittaa kommenttikenttään anekdootteja jo kuvatuista aiheista. Odotamme panostasi, suurkiitos siitä etukäteen!":"Scroll down the time and suggest a topic you think should be included. Please remember that the perspective here is “a game changer”, so we are looking for themes that have been enablers for disruptions. You can also suggest an anecdote directly regarding an event on the timeline. Thank you for your help."},localisedVideoH1:function(){return"fi"==this.language?"Kuukauden video":"Video of the month"},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].url;return t},formatCaptionArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return console.log("striping : "+e),e=e.replace(/%2F/gi,"/"),console.log("stripped : "+e),e},getCommentURL:function(){return console.log("domain in getCommentURL : "+this.domain),this.domain+"/gamechangers/v1/comment"},handleResponseEras:function(e){console.log("number of eras = "+e.detail.response.length),this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){var t,i="--display"+e.target.dataset.args;switch(e.target.dataset.args){case"1_1":t=this.filter1_1?"none":"inline",this.filter1_1=!this.filter1_1;break;case"1_2":t=this.filter1_2?"none":"inline",this.filter1_2=!this.filter1_2;break;case"1_3":t=this.filter1_3?"none":"inline",this.filter1_3=!this.filter1_3;break;case"1_4":t=this.filter1_4?"none":"inline",this.filter1_4=!this.filter1_4;break;case"2_1":t=this.filter2_1?"none":"inline",this.filter2_1=!this.filter2_1;break;case"2_2":t=this.filter2_2?"none":"inline",this.filter2_2=!this.filter2_2;break;case"2_3":t=this.filter2_3?"none":"inline",this.filter2_3=!this.filter2_3;break;case"2_4":t=this.filter2_4?"none":"inline",this.filter2_4=!this.filter2_4;break;case"2_5":t=this.filter2_5?"none":"inline",this.filter2_5=!this.filter2_5;break;case"3_1":t=this.filter3_1?"none":"inline",this.filter3_1=!this.filter3_1;break;case"3_2":t=this.filter3_2?"none":"inline",this.filter3_2=!this.filter3_2;break;case"3_3":t=this.filter3_3?"none":"inline",this.filter3_3=!this.filter3_3;break;case"4_1":t=this.filter4_1?"none":"inline",this.filter4_1=!this.filter4_1;break;case"4_2":t=this.filter4_2?"none":"inline",this.filter4_2=!this.filter4_2}this.customStyle[i]=t,this.updateStyles()},handleEventCollapse:function(e,t,i){var a=e.model.eventItem.id,n="#collapse"+a,o="#comment"+a,s="#associations"+a;this.$$(n).opened?(this.$$(o).style.display="none",this.$$(s).style.display="none"):(this.$$(o).style.display="flex",this.$$(s).style.display="flex"),this.$$(n).toggle()},handleAssociationCollapse:function(e,t,i){var a=e.model.eventItem.id,n=e.model.association.id,o="#associationCollapse"+a+n;this.$$(o).toggle()},handleEventComment:function(e,t,i){var a=e.model.eventItem.id;console.log("open comment dialog for event : "+a);var n="#commentDialog"+a;this.$$(n).open()},handleEventCarousel:function(e,t,i){console.log("full screen tap event");var a=e.model.eventItem.id;console.log("open image carousel dialog for event : "+a);var n="#carouselDialog"+a;this.$$(n).open()},handleResponseComment:function(e){var t=event.model.eventItem.id;console.log("close comment dialog for event : "+t),console.log("comment response : "+JSON.stringify(e.detail.response)),console.log("comment response id "+e.detail.response.id);var i="#commentDialog"+t;this.$$(i).close(),alert("Comment submitted. Thank you.")},submitForm:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert("Comment failed. Please make sure you entered your name, a comment and a valid email then try again")}),t.submit()},eventColour:function(e){var t;switch(e){case"_1_1_admin":t="#5677FC";break;case"_1_2_campus":t="#5677FC";break;case"_1_3_students":t="#5677FC";break;case"_1_4_teaching":t="#5677FC";break;case"_2_1_art_and_design":t="#EC407A";break;case"_2_2_science_and_technology":t="#EC407A";break;case"_2_3_business":t="#EC407A";break;case"_2_4_research":t="#EC407A";break;case"_2_5_multidisciplinarity":t="#EC407A";break;case"_3_1_entrepreneurship":t="#FF9800";break;case"_3_2_corporate_collaboration":t="#FF9800";break;case"_3_3_academic_collaboration":t="#FF9800";break;case"_4_1_global_event":t="#7ED321";break;case"_4_2_regional_event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),i=t.getFullYear(),a=i.toString(),n=a.substr(a.length-1);return"0"==n}});</script>
+  <script>Polymer({is:"gc-app",properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},language:{type:String,value:"fi"},storage:{type:Object},version:{type:String,value:"v2"},storageLoaded:{type:Boolean,value:!1},itemCount:{type:Number,value:0},filter1_1:{type:Boolean,value:!0},filter1_2:{type:Boolean,value:!0},filter1_3:{type:Boolean,value:!0},filter1_4:{type:Boolean,value:!0},filter2_1:{type:Boolean,value:!0},filter2_2:{type:Boolean,value:!0},filter2_3:{type:Boolean,value:!0},filter2_4:{type:Boolean,value:!0},filter2_5:{type:Boolean,value:!0},filter3_1:{type:Boolean,value:!0},filter3_2:{type:Boolean,value:!0},filter3_3:{type:Boolean,value:!0},filter4_1:{type:Boolean,value:!0},filter4_2:{type:Boolean,value:!0}},ready:function(){this.$.requestVideoOfTheMonth.generateRequest()},initializeDefaultStorage:function(){this.storage={lang:"fi",label:"English"},this.handleLocalstorageLoadEvent()},handleLocalstorageLoadEvent:function(){this.language=this.storage.lang,this.storageLoaded=!0,this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.language+"/eras",this.$.requestEras.generateRequest()},changeLanguage:function(){"fi"==this.storage.lang?(this.set("storage.lang","en"),this.set("storage.label","Suomeksi"),this.language="en"):(this.set("storage.lang","fi"),this.set("storage.label","English"),this.language="fi"),location.reload(!1)},eraDOM:function(e){this.debounce("doSomething",function(){if(this.$.spinner.active=!1,this.$.toastFilters.open(),this.queryParams.event){var e="#eventDiv"+this.queryParams.event;this.$$(e).scrollIntoView();var t="#collapse"+this.queryParams.event;this.$$(t).toggle();var i="#comment"+this.queryParams.event,a="#associations"+this.queryParams.event;this.$$(i).style.display="flex",this.$$(a).style.display="flex"}},300)},localisedTitle:function(){return"fi"==this.language?"title_FIN.png":"title.png"},localisedH1:function(){return"fi"==this.language?"Tervetuloa!":"Welcome!"},localisedP1:function(){return"fi"==this.language?"Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen.":"This is a timeline of events from the history of Aalto University and its predecessor schools, that has had an impact for the Finnish society. Here are some historical milestones together with a few impactful chain of events, but this is just a start. Now  we reach out to the community. That is you. Share your insight."},localisedP2:function(){return"fi"==this.language?"Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jakaaksesi ajatuksesi liiku aikajanalla haluamaasi vuoteen ja ehdota lisättäväksi aihetta ja taustatietoja. Voit myös kirjoittaa kommenttikenttään anekdootteja jo kuvatuista aiheista. Odotamme panostasi, suurkiitos siitä etukäteen!":"Scroll down the time and suggest a topic you think should be included. Please remember that the perspective here is “a game changer”, so we are looking for themes that have been enablers for disruptions. You can also suggest an anecdote directly regarding an event on the timeline. Thank you for your help."},localisedVideoH1:function(){return"fi"==this.language?"Kuukauden video":"Video of the month"},localisedPropose:function(){return"fi"==this.language?"Ehdota tapahtumaa":"Suggest an event"},localisedComment:function(){return"fi"==this.language?"Kommentoi":"Comment"},localisedShare:function(){return"fi"==this.language?"Jaa":"Share"},localisedCommentDescription:function(){return"fi"==this.language?"Onko sinulla tähän tapahtumaan liittyvä anekdootti? Lähetä se ja sisältötiimimme julkaisee niistä osan. Käytä oikeaa nimeäsi ja toimivaa sähköpostiosoitetta niin voimme olla tarvittaessa yhteydessä sinuun.":"Do you have an anekdote relating to this event? Send it to us and our editorial team will publish some of them. Use your real name for signing it and working email we can reach you from should there be questions."},localisedCommentSucceeded:function(){return"fi"==this.language?"Kiitos kommentistasi! Sisältötyöryhmä käy läpi kaikki kommentit ja julkaisee niistä osan. Otamme yhteyttä jos lisäkysymyksiä nousee esiin.":"Thank you for your comment. The editorial team will check all comments and publish some of them. We will contact you if further questions."},localisedCommentFailed:function(){return"fi"==this.language?"Lähetys epäonnistui":"Submit failed"},localisedProposeDescription:function(){return"fi"==this.language?"Puuttuko aikajanalta jotain? Lähetä ehdotus sisältötiimillemme. Olemme kiinnostuneita muutokseen johtaneista tapahtumista Aalto-yliopiston ja sitä edeltäneiden koulujen historiasta.":"Is something missing from the timeline? Send a suggestion for our editorial team. We are interested in game changer events from the history of Aalto University and it's predecessor schools."},localisedProposeSucceeded:function(){return"fi"==this.language?"Kiitos ehdotuksestasi! Sisältötyöryhmä valitsee kaikista ehdotuksista muutoksentekijä tapahtumia. Otamme yhteyttä jos lisäkysymyksiä nousee esiin.":"Thank you for your suggestion. The editorial team will select new game changer events from all the suggestions. We will contact you if further questions."},localisedProposeFailed:function(){return"fi"==this.language?"Lähetys epäonnistui":"Submit failed"},localisedName:function(){return"fi"==this.language?"Nimi":"Name"},localisedEmail:function(){return"fi"==this.language,"Email"},localisedCancel:function(){return"fi"==this.language?"Peruuta":"Cancel"},localisedSubmit:function(){return"fi"==this.language?"Lähetä":"Submit"},arrayEmpty:function(e){return 0==e.length},formatImageArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].url;return t},formatCaptionArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return e=e.replace(/%2F/gi,"/")},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},getProposeURL:function(){return this.domain+"/gamechangers/v1/proposal"},handleResponseVideoOfTheMonth:function(e){this.videoOfTheMonth=e.detail.response},handleResponseEras:function(e){this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},handleFilter:function(e){var t,i,a="--display"+e.target.dataset.args,n="#filter_button_"+e.target.dataset.args;switch(e.target.dataset.args){case"1_1":t=this.filter1_1?"none":"inline",i=this.filter1_1?"0.5":"1.0",this.filter1_1=!this.filter1_1;break;case"1_2":t=this.filter1_2?"none":"inline",i=this.filter1_2?"0.5":"1.0",this.filter1_2=!this.filter1_2;break;case"1_3":t=this.filter1_3?"none":"inline",i=this.filter1_3?"0.5":"1.0",this.filter1_3=!this.filter1_3;break;case"1_4":t=this.filter1_4?"none":"inline",i=this.filter1_4?"0.5":"1.0",this.filter1_4=!this.filter1_4;break;case"2_1":t=this.filter2_1?"none":"inline",i=this.filter2_1?"0.5":"1.0",this.filter2_1=!this.filter2_1;break;case"2_2":t=this.filter2_2?"none":"inline",i=this.filter2_2?"0.5":"1.0",this.filter2_2=!this.filter2_2;break;case"2_3":t=this.filter2_3?"none":"inline",i=this.filter2_3?"0.5":"1.0",this.filter2_3=!this.filter2_3;break;case"2_4":t=this.filter2_4?"none":"inline",i=this.filter2_4?"0.5":"1.0",this.filter2_4=!this.filter2_4;break;case"2_5":t=this.filter2_5?"none":"inline",i=this.filter2_5?"0.5":"1.0",this.filter2_5=!this.filter2_5;break;case"3_1":t=this.filter3_1?"none":"inline",i=this.filter3_1?"0.5":"1.0",this.filter3_1=!this.filter3_1;break;case"3_2":t=this.filter3_2?"none":"inline",i=this.filter3_2?"0.5":"1.0",this.filter3_2=!this.filter3_2;break;case"3_3":t=this.filter3_3?"none":"inline",i=this.filter3_3?"0.5":"1.0",this.filter3_3=!this.filter3_3;break;case"4_1":t=this.filter4_1?"none":"inline",i=this.filter4_1?"0.5":"1.0",this.filter4_1=!this.filter4_1;break;case"4_2":t=this.filter4_2?"none":"inline",i=this.filter4_2?"0.5":"1.0",this.filter4_2=!this.filter4_2}this.$$(n).style.opacity=i,this.customStyle[a]=t,this.updateStyles()},handleEventCollapse:function(e,t,i){var a=e.model.eventItem.id,n="#collapse"+a,s="#comment"+a,o="#associations"+a;this.$$(n).opened?(this.$$(s).style.display="none",this.$$(o).style.display="none"):(this.$$(s).style.display="flex",this.$$(o).style.display="flex"),this.$$(n).toggle()},handleAssociationCollapse:function(e,t,i){var a=e.model.eventItem.id,n=e.model.association.id,s="#associationCollapse"+a+n;this.$$(s).toggle()},handleEventComment:function(e,t,i){var a=e.model.eventItem.id,n="#commentDialog"+a;this.$$(n).open()},handleEventPropose:function(e,t,i){this.$$("#proposeDialog").open()},openCreditsDialog:function(){this.$$("#creditsDialog").open()},handleEventCarousel:function(e,t,i){var a=e.model.eventItem.id,n="#carouselDialog"+a;this.$$(n).open()},handleResponseComment:function(e){var t=event.model.eventItem.id,i="#commentDialog"+t;this.$$(i).close(),alert(this.localisedCommentSucceeded)},handleResponsePropose:function(e){console.log("propose response : "+JSON.stringify(e.detail.response)),console.log("propose response id "+e.detail.response.id),this.$$("#proposeDialog").close(),alert(this.localisedProposeSucceeded)},submitComment:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert(this.localisedCommentFailed)}),t.submit()},submitProposal:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/proposal",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert(this.localisedProposeFailed)}),t.submit()},eventColour:function(e){var t;switch(e){case"_1_1_admin":t="#5677FC";break;case"_1_2_campus":t="#5677FC";break;case"_1_3_students":t="#5677FC";break;case"_1_4_teaching":t="#5677FC";break;case"_2_1_art_and_design":t="#EC407A";break;case"_2_2_science_and_technology":t="#EC407A";break;case"_2_3_business":t="#EC407A";break;case"_2_4_research":t="#EC407A";break;case"_2_5_multidisciplinarity":t="#EC407A";break;case"_3_1_entrepreneurship":t="#FF9800";break;case"_3_2_corporate_collaboration":t="#FF9800";break;case"_3_3_academic_collaboration":t="#FF9800";break;case"_4_1_global_event":t="#7ED321";break;case"_4_2_regional_event":t="#7ED321";break;default:t="#9B9B9B"}return t},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),i=t.getFullYear(),a=i.toString(),n=a.substr(a.length-1);return"0"==n}});</script>
 
 </dom-module>
 </body></html>

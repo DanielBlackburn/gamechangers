@@ -37,6 +37,14 @@
           --iron-image-width: 100%;
         }
       }
+
+      .video-of-the-month {
+        width: 90%;
+      }
+
+      .event-video {
+        width: 100%;
+      }
     </style>
 
     <!-- Language settings local storage -->
@@ -47,14 +55,16 @@
       on-iron-localstorage-load="handleLocalstorageLoadEvent"
     ></iron-localstorage>
 
-    <!-- app route. used for deep linking -->
-    <app-location route="{{route}}"></app-location>
-    <app-route
-        route="{{route}}"
-        pattern="/:event_id"
-        data="{{routeData}}"
-        tail="{{subroute}}"
-    ></app-route>
+    <!-- app route. Query params used for deep linking -->
+    <app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
+
+    <!-- Load video of the month vimeo ID -->
+    <iron-ajax
+      id="requestVideoOfTheMonth"
+      url="https://deepamehta.aalto.fi/gamechangers/v1/featured_video"
+      handle-as="json"
+      on-response="handleResponseVideoOfTheMonth">
+    </iron-ajax>
 
 <!--    <parallax-container> -->
 
@@ -65,6 +75,9 @@
       <div class="menuButtons">
         <paper-button on-tap="changeLanguage">{{storage.label}}</paper-button>
         <paper-button on-tap="openCreditsDialog">Credits</paper-button>
+        <paper-dialog id="creditsDialog">
+           <p>Credits and photo credits here</p>
+        </paper-dialog>
       </div>
 
       <div class="container flex-horizontal">
@@ -80,14 +93,31 @@
                 <p class="info">{{localisedP1()}}</p>
                 </br>
                 <p class="info">{{localisedP2()}}</p>
+                </br>
+                <!-- <paper-button on-tap="handleEventPropose" style="background-color: #F8E81C; border-radius: 0; margin: 0;">{{localisedPropose()}}</paper-button> -->
+                <paper-dialog class="input-dialog" id="proposeDialog" modal>
+                   <p>{{localisedProposeDescription()}}</p>
+                   <form is="iron-form" id="propose" method="post" content-type="application/json" action="{{getProposeURL}}" on-iron-form-response="handleResponsePropose">
+                         <paper-input name="name" label="{{localisedName()}}" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
+                         <paper-input name="email" label="{{localisedEmail()}}" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
+                         <paper-input name="notes" label="{{localisedPropose()}}" char-counter maxlength="160" auto-validate error-message="Please enter your proposal"></paper-input>
+                         <br>
+                         <paper-button dialog-dismiss>{{localisedCancel()}}</paper-button>
+                         <paper-button raised autofocus on-tap="submitProposal">{{localisedSubmit()}}</paper-button>
+                   </form>
+                </paper-dialog>
+                </br>
+                </br>
+                <h1 class="info">{{localisedVideoH1()}}</h1>
+                <div class="video-of-the-month">
+                  <vimeo-player id="videoOfTheMonth" videoid="{{videoOfTheMonth}}"></vimeo-player>
+                </div>
+                <p class="info"> </p>
+                <p class="info"> </p>
+                </br>
               </div>
               <div class="flexchild">
-                <!-- Change this to be data driven, get latest video from the API -->
-                <h1 class="info">{{localisedVideoH1()}}</h1>
-                <vimeo-player id="videoOfTheMonth" videoid="39189423"></vimeo-player>
-                <p class="info"> </p>
-                <p class="info"> </p>
-              </br>
+                </br>
               </div>
             </div>
         </div>
@@ -166,7 +196,7 @@
                           <iron-image style="width: 100%; height: 240px;" sizing="cover" src="[[eventItem.images.0.url]]"></iron-image>
                           <!-- ADD definitiion of Modal to show all images here and icon button to show the modal -->
 
-                          <paper-icon-button src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
+                          <paper-icon-button id="fullscreen-button" src="/icns/fullscreen.svg" on-tap="handleEventCarousel"></paper-icon-button>
 
                           <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal>
                             <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
@@ -180,7 +210,9 @@
 
                       <!-- Vimeo player embed test -->
                       <template is="dom-if" if="{{eventItem.vimeoVideoId}}">
-                        <vimeo-player id="video{{eventItem.vimeoVideoId}}" videoid="{{eventItem.vimeoVideoId}}"></vimeo-player>
+                        <div class="event-video">
+                          <vimeo-player id="video{{eventItem.vimeoVideoId}}" videoid="{{eventItem.vimeoVideoId}}"></vimeo-player>
+                        </div>
                       </template>
 
                       <div class="event-text">
@@ -192,16 +224,16 @@
                            <paper-button on-tap="handleEventComment">Comment</paper-button>
 
                           <!-- <paper-button raised onclick="modal{{eventItem.id}}.open()">Comment</paper-button> -->
-                          <paper-dialog id="commentDialog[[eventItem.id]]" modal>
-                            <p>Please enter your name, email and comment below.</p>
+                          <paper-dialog class="input-dialog" id="commentDialog[[eventItem.id]]" modal>
+                            <p>{{localisedCommentDescription()}}</p>
                             <form is="iron-form" id="form[[eventItem.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
-                                  <paper-input name="name" label="Name" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
-                                  <paper-input name="email" label="Email" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
-                                  <paper-input name="notes" label="Comment" char-counter maxlength="160" auto-validate error-message="Please enter a comment"></paper-input>
+                                  <paper-input name="name" label="{{localisedName()}}" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
+                                  <paper-input name="email" label="{{localisedEmail()}}" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
+                                  <paper-input name="notes" label="{{localisedComment()}}" char-counter maxlength="160" auto-validate error-message="Please enter a comment"></paper-input>
                                   <input type="hidden" name="commentedItemId" value="[[eventItem.id]]"/>
                                   <br>
-                                  <paper-button dialog-dismiss>Cancel</paper-button>
-                                  <paper-button raised autofocus on-tap="submitForm">Submit</paper-button>
+                                  <paper-button dialog-dismiss>{{localisedCancel()}}</paper-button>
+                                  <paper-button raised autofocus on-tap="submitComment">{{localisedSubmit()}}</paper-button>
                             </form>
                             <div class="buttons">
 
@@ -241,6 +273,16 @@
                                 </div>
                               </template>
 
+                              <!-- Vimeo player embed test -->
+                              <template is="dom-if" if="{{association.vimeoVideoId}}">
+                                <div class="event-video">
+                                  <vimeo-player id="video{{association.vimeoVideoId}}" videoid="{{association.vimeoVideoId}}"></vimeo-player>
+                                </div>
+                              </template>
+
+                              <div class="association-title">
+                                  <p>{{association.name}} ({{{{eventYear(association.from)}}}})</p>
+                              </div>
                               <div class="association-text">
                                  <!-- <div inner-h-t-m-l="{{justText(association.notes)}}"></div> -->
                                  <p>{{association.notes}}</p>
@@ -265,22 +307,27 @@
     </template>
   </div>
 
+</br>
+</br>
+</br>
+</br>
+
     <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
-    <paper-toast id="toastFilters" duration="0" text="Filters ">
-      <paper-icon-button id="1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
-      <paper-icon-button id="1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
-      <paper-icon-button id="1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
-      <paper-icon-button id="1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
-      <paper-icon-button id="2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
-      <paper-icon-button id="2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
-      <paper-icon-button id="2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
-      <paper-icon-button id="2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
-      <paper-icon-button id="2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
-      <paper-icon-button id="3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
-      <paper-icon-button id="3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
-      <paper-icon-button id="3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
-      <paper-icon-button id="4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
-      <paper-icon-button id="4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
+    <paper-toast id="toastFilters" duration="0" text="">
+      <paper-icon-button id="filter_button_1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
     </paper-toast>
 
     <!--    </parallax-container> -->
@@ -404,34 +451,24 @@
           value: true
         }
       },
-      // When ready call API to get all event data
+      // When ready call API to get video of the month Id
       ready: function(){
-        // call function to get video first, display this then get events
-        this.itemCount = 0
-        // callback for timeline finishing loading
-        //console.log("route " + this.route);
-        //console.log("routeData " + this.routeData.event_id);
-/*
-        this.$.timeline.addEventListener("dom-change", function(event){
-          console.log("era dom change " + this.itemCount);
-          this.itemCount = this.itemCount + 1;
-          //console.log("eras total " + this.eras.length);
-        });
-*/
+        this.$.requestVideoOfTheMonth.generateRequest();
       },
       // Initialise local strage with default lang (fi)
       initializeDefaultStorage: function() {
-        console.log("storage Init")
+        //console.log("storage Init")
         this.storage = {
           lang: "fi",
           label: "English"
         }
+        // Trigger load data manually after init on first visit
+        this.handleLocalstorageLoadEvent();
       },
       // Once we have local settings we know the language, so load data
       handleLocalstorageLoadEvent: function(){
-        console.log("local storage : @ storage load " + this.storage.lang);
+        //console.log("local storage : @ storage load " + this.storage.lang);
         this.language = this.storage.lang;
-        console.log("language property : @ storage load " + this.language);
         this.storageLoaded = true;
         // request Eras
         this.$.requestEras.url = this.domain + "/gamechangers/" + this.version + "/" + this.language + "/eras";
@@ -454,28 +491,25 @@
       eraDOM: function(event) {
         // Once the dom changes have stopped, stop spinner, show toast, etc.
         this.debounce('doSomething', function () {
-          console.log('Debounce...');
+          //console.log('Debounce...');
           this.$.spinner.active = false;
           this.$.toastFilters.open();
-          // test code
-
-          //var deep = "eventDiv" + 22167;
-          //var element = document.getElementById("eventDiv22880");
-          //element.scrollIntoView();
 
           // open event if event id passed in route
-          if (this.routeData.event_id) {
-            console.log('Deep link...');
-            var deep = "#eventDiv" + this.routeData.event_id;
+          //console.log('this.queryParams', this.queryParams);
+          //console.log('this.queryParams.event', this.queryParams.event);
+
+          if (this.queryParams.event) {
+            //console.log('Deep link...');
+            var deep = "#eventDiv" + this.queryParams.event;
             this.$$(deep).scrollIntoView();
-            var collapse = "#collapse" + this.routeData.event_id;
+            var collapse = "#collapse" + this.queryParams.event;
             this.$$(collapse).toggle();
-            var commentDiv = '#comment' + this.routeData.event_id;
-            var associationsDiv = '#associations' + this.routeData.event_id;
+            var commentDiv = '#comment' + this.queryParams.event;
+            var associationsDiv = '#associations' + this.queryParams.event;
             this.$$(commentDiv).style.display='flex'
             this.$$(associationsDiv).style.display='flex'
           }
-
         }, 300);
       },
       // UI Localisation functions
@@ -494,6 +528,46 @@
       localisedVideoH1: function() {
         return (this.language == "fi") ? "Kuukauden video" : "Video of the month";
       },
+      localisedPropose: function() {
+        return (this.language == "fi") ? "Ehdota tapahtumaa" : "Suggest an event";
+      },
+      localisedComment: function() {
+        return (this.language == "fi") ? "Kommentoi" : "Comment";
+      },
+      localisedShare: function() {
+        return (this.language == "fi") ? "Jaa" : "Share";
+      },
+      localisedCommentDescription: function() {
+        return (this.language == "fi") ? "Onko sinulla tähän tapahtumaan liittyvä anekdootti? Lähetä se ja sisältötiimimme julkaisee niistä osan. Käytä oikeaa nimeäsi ja toimivaa sähköpostiosoitetta niin voimme olla tarvittaessa yhteydessä sinuun." : "Do you have an anekdote relating to this event? Send it to us and our editorial team will publish some of them. Use your real name for signing it and working email we can reach you from should there be questions.";
+      },
+      localisedCommentSucceeded: function() {
+        return (this.language == "fi") ? "Kiitos kommentistasi! Sisältötyöryhmä käy läpi kaikki kommentit ja julkaisee niistä osan. Otamme yhteyttä jos lisäkysymyksiä nousee esiin." : "Thank you for your comment. The editorial team will check all comments and publish some of them. We will contact you if further questions.";
+      },
+      localisedCommentFailed: function() {
+        return (this.language == "fi") ? "Lähetys epäonnistui" : "Submit failed";
+      },
+      localisedProposeDescription: function() {
+        return (this.language == "fi") ? "Puuttuko aikajanalta jotain? Lähetä ehdotus sisältötiimillemme. Olemme kiinnostuneita muutokseen johtaneista tapahtumista Aalto-yliopiston ja sitä edeltäneiden koulujen historiasta." : "Is something missing from the timeline? Send a suggestion for our editorial team. We are interested in game changer events from the history of Aalto University and it's predecessor schools.";
+      },
+      localisedProposeSucceeded: function() {
+        return (this.language == "fi") ? "Kiitos ehdotuksestasi! Sisältötyöryhmä valitsee kaikista ehdotuksista muutoksentekijä tapahtumia. Otamme yhteyttä jos lisäkysymyksiä nousee esiin." : "Thank you for your suggestion. The editorial team will select new game changer events from all the suggestions. We will contact you if further questions.";
+      },
+      localisedProposeFailed: function() {
+        return (this.language == "fi") ? "Lähetys epäonnistui" : "Submit failed";
+      },
+      localisedName: function() {
+        return (this.language == "fi") ? "Nimi" : "Name";
+      },
+      localisedEmail: function() {
+        return (this.language == "fi") ? "Email" : "Email";
+      },
+      localisedCancel: function() {
+        return (this.language == "fi") ? "Peruuta" : "Cancel";
+      },
+      localisedSubmit: function() {
+        return (this.language == "fi") ? "Lähetä" : "Submit";
+      },
+
       // Function to check if an array is empty
       arrayEmpty: function(array) {
         return array.length == 0;
@@ -521,19 +595,27 @@
         return r;
       },
       stripURL: function(url){
-        console.log ("striping : " + url);
+        //console.log ("striping : " + url);
         url = url.replace(/%2F/gi, "/");
-        console.log ("stripped : " + url);
+        //console.log ("stripped : " + url);
         return url;
       },
       getCommentURL: function() {
         //return "http://localhost:8080/gamechangers/v1/comment";
-        console.log("domain in getCommentURL : " + this.domain);
         return this.domain + "/gamechangers/v1/comment";
+      },
+      getProposeURL: function() {
+        //return "http://localhost:8080/gamechangers/v1/propose";
+        return this.domain + "/gamechangers/v1/proposal";
+      },
+      // Handles data being returned from the API call to get video of the month
+      handleResponseVideoOfTheMonth: function (data) {
+          //console.log("Video of the month vime ID = " + data.detail.response);
+          this.videoOfTheMonth = data.detail.response;
       },
       // Handles data being returned from the API call to get eras
       handleResponseEras: function (data) {
-          console.log("number of eras = " + data.detail.response.length);
+          //console.log("number of eras = " + data.detail.response.length);
           this.eras = data.detail.response;
       },
       // Event sorting function
@@ -547,66 +629,86 @@
       // Toggle event cards visibility based on event types
       handleFilter: function(e) {
         var filter = "--display" + e.target.dataset.args;
+        var selector = "#filter_button_" + e.target.dataset.args;
         var d;
+        var op;
         switch (e.target.dataset.args) {
           case "1_1":
               d = this.filter1_1 ? "none" : "inline";
+              op = this.filter1_1 ? "0.5" : "1.0";
               this.filter1_1 = !this.filter1_1;
               break;
           case "1_2":
               d = this.filter1_2 ? "none" : "inline";
+              op = this.filter1_2 ? "0.5" : "1.0";
               this.filter1_2 = !this.filter1_2;
               break;
           case "1_3":
               d = this.filter1_3 ? "none" : "inline";
+              op = this.filter1_3 ? "0.5" : "1.0";
               this.filter1_3 = !this.filter1_3;
               break;
           case "1_4":
               d = this.filter1_4 ? "none" : "inline";
+              op = this.filter1_4 ? "0.5" : "1.0";
               this.filter1_4 = !this.filter1_4;
               break;
           case "2_1":
               d = this.filter2_1 ? "none" : "inline";
+              op = this.filter2_1 ? "0.5" : "1.0";
               this.filter2_1 = !this.filter2_1;
               break;
           case "2_2":
               d = this.filter2_2 ? "none" : "inline";
+              op = this.filter2_2 ? "0.5" : "1.0";
               this.filter2_2 = !this.filter2_2;
               break;
           case "2_3":
               d = this.filter2_3 ? "none" : "inline";
+              op = this.filter2_3 ? "0.5" : "1.0";
               this.filter2_3 = !this.filter2_3;
               break;
           case "2_4":
               d = this.filter2_4 ? "none" : "inline";
+              op = this.filter2_4 ? "0.5" : "1.0";
               this.filter2_4 = !this.filter2_4;
               break;
           case "2_5":
               d = this.filter2_5 ? "none" : "inline";
+              op = this.filter2_5 ? "0.5" : "1.0";
               this.filter2_5 = !this.filter2_5;
               break;
           case "3_1":
               d = this.filter3_1 ? "none" : "inline";
+              op = this.filter3_1 ? "0.5" : "1.0";
               this.filter3_1 = !this.filter3_1;
               break;
           case "3_2":
               d = this.filter3_2 ? "none" : "inline";
+              op = this.filter3_2 ? "0.5" : "1.0";
               this.filter3_2 = !this.filter3_2;
               break;
           case "3_3":
               d = this.filter3_3 ? "none" : "inline";
+              op = this.filter3_3 ? "0.5" : "1.0";
               this.filter3_3 = !this.filter3_3;
               break;
           case "4_1":
               d = this.filter4_1 ? "none" : "inline";
+              op = this.filter4_1 ? "0.5" : "1.0";
               this.filter4_1 = !this.filter4_1;
               break;
           case "4_2":
               d = this.filter4_2 ? "none" : "inline";
+              op = this.filter4_2 ? "0.5" : "1.0";
               this.filter4_2 = !this.filter4_2;
               break;
         }
         //console.log("filter : " + filter + " equals " + d);
+        //this.$$(commentDiv).style.src='none'
+
+        //console.log("button equals " + selector + " and op equals " + op + " filter equals " + filter);
+        this.$$(selector).style.opacity = op;
         this.customStyle[filter] = d;
         this.updateStyles();
       },
@@ -636,33 +738,45 @@
       handleEventComment: function(event, detail, sender) {
         //console.log("comment tap event");
         var id = event.model.eventItem.id;
-        console.log("open comment dialog for event : " + id);
+        //console.log("open comment dialog for event : " + id);
         var dialog = '#commentDialog' + id;
         this.$$(dialog).open();
       },
+      handleEventPropose: function(event, detail, sender) {
+        this.$$("#proposeDialog").open();
+      },
+      openCreditsDialog: function() {
+        this.$$("#creditsDialog").open();
+      },
       // Open carousel dialog when full screen button is tapped
       handleEventCarousel: function(event, detail, sender) {
-        console.log("full screen tap event");
+        //console.log("full screen tap event");
         var id = event.model.eventItem.id;
-        console.log("open image carousel dialog for event : " + id);
+        //console.log("open image carousel dialog for event : " + id);
         var dialog = '#carouselDialog' + id;
         this.$$(dialog).open();
       },
       // Handle response from API after comment, display message close dialog on success.
       handleResponseComment: function (data) {
         var id = event.model.eventItem.id;
-        console.log("close comment dialog for event : " + id);
-        console.log("comment response : " + JSON.stringify(data.detail.response));
-        console.log("comment response id " + data.detail.response.id);
+        //console.log("close comment dialog for event : " + id);
+        //console.log("comment response : " + JSON.stringify(data.detail.response));
+        //console.log("comment response id " + data.detail.response.id);
 
         var dialog = '#commentDialog' + id;
         this.$$(dialog).close();
-        alert ("Comment submitted. Thank you.");
+        alert (this.localisedCommentSucceeded);
       },
-      // function used to submit forms (comment/propose) with paper-button
-      submitForm: function(event) {
+      // Handle response from API after comment, display message close dialog on success.
+      handleResponsePropose: function (data) {
+        console.log("propose response : " + JSON.stringify(data.detail.response));
+        console.log("propose response id " + data.detail.response.id);
+        this.$$("#proposeDialog").close();
+        alert (this.localisedProposeSucceeded);
+      },
+      // function used to submit comment form
+      submitComment: function(event) {
         var form = event.target.parentElement;
-        //console.log("1 " + event.target.parentElement , typeof(event.target.parentElement)); //));
         // work around to change method to PUT before submitting
         form.addEventListener('iron-form-presubmit', function() {
           //console.log("pre-submit form function called");
@@ -673,7 +787,25 @@
         });
         form.addEventListener('iron-form-error', function(event) {
           //console.log("comment form error response");
-          alert ("Comment failed. Please make sure you entered your name, a comment and a valid email then try again");
+          alert (this.localisedCommentFailed);
+        });
+        //console.log("submit form function called : ") ;
+        form.submit();
+      },
+      // function used to submit comment form
+      submitProposal: function(event) {
+        var form = event.target.parentElement;
+        // work around to change method to PUT before submitting
+        form.addEventListener('iron-form-presubmit', function() {
+          //console.log("pre-submit form function called");
+          this.request.method = 'PUT';
+          this.request.url =  'https://deepamehta.aalto.fi/gamechangers/v1/proposal';
+          this.request.handleAs = 'json';
+          //console.log(this.serialize());
+        });
+        form.addEventListener('iron-form-error', function(event) {
+          //console.log("comment form error response");
+          alert (this.localisedProposeFailed);
         });
         //console.log("submit form function called : ") ;
         form.submit();
