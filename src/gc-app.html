@@ -9,6 +9,8 @@
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
@@ -33,6 +35,8 @@
         display: block;
         padding: 0px;
         overflow: hidden;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        font-weight: normal;
         iron-image {
           --iron-image-width: 100%;
         }
@@ -66,6 +70,7 @@
       on-response="handleResponseVideoOfTheMonth">
     </iron-ajax>
 
+    <iron-media-query query="(min-width: 900px)" query-matches="{{largeViewport}}"></iron-media-query>
 <!--    <parallax-container> -->
 
     <!-- Alpha message section above timeline -->
@@ -75,8 +80,112 @@
       <div class="menuButtons">
         <paper-button on-tap="changeLanguage">{{storage.label}}</paper-button>
         <paper-button on-tap="openCreditsDialog">Credits</paper-button>
-        <paper-dialog id="creditsDialog">
-           <p>Credits and photo credits here</p>
+        <paper-dialog class="credits-dialog" id="creditsDialog">
+
+           <div class="container flex-horizontal">
+             <div class="credits">
+               <template is="dom-if" if="{{languageFinnish()}}">
+                 <h1 class="credits">Kuvakrediitit</h1>
+                 <p class="credits">Kiitämme lämpimästi useita suomalaisia toimijoita heidän Creative Commons tai Public Domain kuva-arkistoistaan. Aikajanan historialliset kuvat on saatu seuraavista kokoelmista:</p>
+                 <p class="credits">Museovirasto<br>
+                    Suomen valokuvataiteen museo<br>
+                    Yleisradio<br>
+                    Aalto University Commons<br>
+                    Svenska litteratursällskapet i Finland</p>
+                 <p class="credits">Kuvaajat:<br>
+                   Aino Huovio<br>
+                  ALA Arkkitehdit<br>
+                  Gustaf Sandberg<br>
+                  Helge Heinonen<br>
+                  I.K. Inha<br>
+                  Matt Britt<br>
+                  Matti Tirri<br>
+                  Mikko Raskinen<br>
+                  T. H. Järvi<br>
+                  Tuomas Uusheimo</p>
+               </template>
+               <template is="dom-if" if="{{!languageFinnish()}}">
+                 <h1 class="credits">Photo credits</h1>
+                 <p class="credits">We are grateful of the selections of Creative Commons or Public Domain image collections provided by groving number of Finnish institutions.</p>
+                 <p class="credits">Historical images of this timeline are from collections by:<br>
+                    National Board of Antiquities<br>
+                    The Finnish Museum of Photography<br>
+                    The Finnish Broadcasting Company<br>
+                    Aalto University Commons<br>
+                    The Society of Swedish Literature in Finland</p>
+                 <p class="credits">Images from:<br>
+                  Aino Huovio<br>
+                  ALA Arkkitehdit<br>
+                  Gustaf Sandberg<br>
+                  Helge Heinonen<br>
+                  I.K. Inha<br>
+                  Matt Britt<br>
+                  Matti Tirri<br>
+                  Mikko Raskinen<br>
+                  T. H. Järvi<br>
+                  Tuomas Uusheimo</p>
+               </template>
+             </div>
+             <div class="credits">
+               <template is="dom-if" if="{{languageFinnish()}}">
+                 <h1 class="credits">Työryhmä</h1>
+                 <p class="credits">Aalto-yliopiston Suomi 100 -ohjausryhmä</p>
+                  <p class="credits">Tuottaja<br>
+                  Tatu Pohjola<br><br>
+                  Sisältötiimi<br>
+                  Sampsa Kaataja<br>
+                  Heli Laukko<br>
+                  Eeva Lehtinen<br>
+                  Panu Nykänen<br>
+                  Terhi Olllikainen<br>
+                  Mikko Raskinen<br>
+                  Anu Salmi-Savilampi<br>
+                  Laura Siira<br><br>
+                  Verkkosovellus<br>
+                  Tuomo Tammenpää<br>
+                  Daniel Blackburn<br>
+                  Jürgen Neumann<br>
+                  Robert Schuster<br><br>
+                  IT-tuki<br>
+                  Mika Niemi<br><br>
+                  Fyysinen aikajana (Otakaari 1, Otaniemi kampus)<br>
+                  Akbar Khatir<br>
+                  Maria Levina<br><br>
+                  Aalto Muutoksentekijät -aikajana backend is powered by<br>
+                  Deepamehta.de</p>
+               </template>
+               <template is="dom-if" if="{{!languageFinnish()}}">
+                 <h1 class="credits">Team</h1>
+                 <p class="credits">Aalto University Finland 100 Steering group</p>
+                  <p class="credits">Producer<br>
+                  Tatu Pohjola<br><br>
+                  Content team<br>
+                  Sampsa Kaataja<br>
+                  Heli Laukko<br>
+                  Eeva Lehtinen<br>
+                  Panu Nykänen<br>
+                  Terhi Olllikainen<br>
+                  Mikko Raskinen<br>
+                  Anu Salmi-Savilampi<br>
+                  Laura Siira<br><br>
+                  Webapp<br>
+                  Tuomo Tammenpää<br>
+                  Daniel Blackburn<br>
+                  Jürgen Neumann<br>
+                  Robert Schuster<br><br>
+                  IT support<br>
+                  Mika Niemi<br><br>
+                  Physical Timeline (Otakaari 1, Otaniemi campus)<br>
+                  Akbar Khatir<br>
+                  Maria Levina<br><br>
+                  Aalto Game Changers backend is powered by<br>
+                  Deepamehta.de</p>
+               </template>
+             </div>
+           </div>
+
+           <paper-icon-button class="closeButton" icon="close" dialog-confirm autofocus></paper-icon-button>
+
         </paper-dialog>
       </div>
 
@@ -94,13 +203,15 @@
                 </br>
                 <p class="info">{{localisedP2()}}</p>
                 </br>
-                <!-- <paper-button on-tap="handleEventPropose" style="background-color: #F8E81C; border-radius: 0; margin: 0;">{{localisedPropose()}}</paper-button> -->
+                <!--  <paper-button on-tap="handleEventPropose" style="background-color: #F8E81C; border-radius: 0; margin: 0;">{{localisedPropose()}}</paper-button> -->
                 <paper-dialog class="input-dialog" id="proposeDialog" modal>
                    <p>{{localisedProposeDescription()}}</p>
                    <form is="iron-form" id="propose" method="post" content-type="application/json" action="{{getProposeURL}}" on-iron-form-response="handleResponsePropose">
                          <paper-input name="name" label="{{localisedName()}}" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
                          <paper-input name="email" label="{{localisedEmail()}}" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
                          <paper-input name="notes" label="{{localisedPropose()}}" char-counter maxlength="160" auto-validate error-message="Please enter your proposal"></paper-input>
+                         <input type="hidden" name="from" value="972408544247">
+                         <input type="hidden" name="to" value="1477330144247">
                          <br>
                          <paper-button dialog-dismiss>{{localisedCancel()}}</paper-button>
                          <paper-button raised autofocus on-tap="submitProposal">{{localisedSubmit()}}</paper-button>
@@ -151,40 +262,42 @@
             </div>
 
             <!-- Column 2 - comments -->
-            <div class="flexchild">
-              <div class="commentColumn">
-                <div class="comment" id$="comment{{eventItem.id}}" style="display: none;">
-                  <div class="flexchild">
+            <template is="dom-if" if="{{largeViewport}}">
+              <div class="flexchild">
+                <div class="commentColumn">
+                  <div class="comment" id$="comment{{eventItem.id}}" style="display: none;">
+                    <div class="flexchild">
 
-                     <div class="comment-container">
+                       <div class="comment-container">
 
-                        <div class="comment-icon">
-                          <iron-icon icon="comment"></iron-icon>
-                        </div>
+                          <div class="comment-icon">
+                            <iron-icon icon="comment"></iron-icon>
+                          </div>
 
-                        <div class="comment-text">
-                          <template is="dom-repeat" items="{{eventItem.latestPublicComments}}" as="comment">
-                            <p>{{comment.notes}}</p>
-                            <p style="font-size: 11px;">{{comment.name}}</p>
-                          </template>
-                        </div>
+                          <div class="comment-text">
+                            <template is="dom-repeat" items="{{eventItem.latestPublicComments}}" as="comment">
+                              <p>{{comment.notes}}</p>
+                              <p style="font-size: 11px;">{{comment.name}}</p>
+                            </template>
+                          </div>
+
+                      </div>
 
                     </div>
-
-                  </div>
-                  <div class="leftArrow">
-                    <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
+                    <div class="leftArrow">
+                      <img src="/pictures/arrowLeft.png" style="position: relative; top: 0; left: 0; margin: 12px;"/>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </template>
 
             <!-- Column 3 - events -->
             <div class="flexchild">
               <paper-card>
                 <div class="event" id="event">
                   <div class="event-header" style$="background-color: [[eventColour(eventItem.type)]];">
-                    <paper-button on-tap="handleEventCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
+                    <paper-button on-tap="handleEventCollapse" style="max-width: 330px;">
                       <iron-icon src="/icns/{{eventItem.type}}.svg" style="margin-right: 8px;"></iron-icon>
                       <span class="buttontext">{{eventItem.name}}</span>
                     </paper-button>
@@ -201,7 +314,7 @@
                           <paper-dialog id="carouselDialog[[eventItem.id]]" class="carousel-dialog" modal>
                             <image-slider images="{{formatImageArray(eventItem.images)}}" captions="{{formatCaptionArray(eventItem.images)}}"></image-slider>
                             <!-- <div class="buttons"> -->
-                              <paper-icon-button class="closeButton" src="/icns/close.svg" dialog-confirm autofocus></paper-icon-button>
+                              <paper-icon-button class="closeButton" icon="close" dialog-confirm autofocus></paper-icon-button>
                             <!-- </div> -->
                           </paper-dialog>
 
@@ -218,12 +331,12 @@
                       <div class="event-text">
                          <!-- <div inner-h-t-m-l="{{justText(eventItem.notes)}}"> </div> -->
                          <p>{{eventYear(eventItem.from)}}</p>
-                         <p style="font-style: bold;">{{eventItem.name}}</p>
+                         <p style="font-weight: bold;">{{eventItem.name}}</p>
                          <p>{{eventItem.notes}}
                          </p>
                       </div>
                       <div class="event-footer">
-                           <paper-button on-tap="handleEventComment">Comment</paper-button>
+                           <!-- <paper-button on-tap="handleEventComment">Comment</paper-button> -->
 
                           <!-- <paper-button raised onclick="modal{{eventItem.id}}.open()">Comment</paper-button> -->
                           <paper-dialog class="input-dialog" id="commentDialog[[eventItem.id]]" modal>
@@ -232,7 +345,7 @@
                                   <paper-input name="name" label="{{localisedName()}}" char-counter maxlength="160" auto-validate error-message="Please enter your name"></paper-input>
                                   <paper-input name="email" label="{{localisedEmail()}}" char-counter maxlength="160" auto-validate error-message="Please enter your email"></paper-input>
                                   <paper-input name="notes" label="{{localisedComment()}}" char-counter maxlength="160" auto-validate error-message="Please enter a comment"></paper-input>
-                                  <input type="hidden" name="commentedItemId" value="[[eventItem.id]]"/>
+                                  <input type="hidden" name="commentedItemId" value="[[eventItem.id]]">
                                   <br>
                                   <paper-button dialog-dismiss>{{localisedCancel()}}</paper-button>
                                   <paper-button raised autofocus on-tap="submitComment">{{localisedSubmit()}}</paper-button>
@@ -260,7 +373,7 @@
                       <paper-card>
                         <div class="event">
                           <div class="event-header" style$="background-color: {{eventColour(association.type)}};">
-                            <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px; font-family: 'Roboto Condensed', sans-serif; font-weight: bold; text-transform: none;">
+                            <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px;">
                               <!-- <iron-icon icon={{eventItem.type}} style="margin-right: 8px;"></iron-icon> -->
                               <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px;"></iron-icon>
                               <span class="buttontext">{{association.name}}</span>
@@ -284,7 +397,7 @@
 
                               <div class="event-text">
                                  <p>{{eventYear(association.from)}}</p>
-                                 <p style="font-style: bold;">{{association.name}}</p>
+                                 <p style="font-weight: bold;">{{association.name}}</p>
                                  <p>{{association.notes}}</p>
                               </div>
                           </iron-collapse>
@@ -307,12 +420,12 @@
     </template>
   </div>
 
-</br>
-</br>
-</br>
-</br>
+  <div style="background: url('/pictures/BG_footer.png') no-repeat; height: 519px; min-height: 519px;">
 
-    <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
+  </div>
+
+  <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
+
     <paper-toast id="toastFilters" duration="0" text="">
       <paper-icon-button id="filter_button_1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
       <paper-icon-button id="filter_button_1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
@@ -345,6 +458,10 @@
   <script>
     Polymer({
       is: 'gc-app',
+
+      behaviors: [
+        Polymer.IronResizableBehavior
+      ],
 
       properties: {
         /**
@@ -387,6 +504,10 @@
           value: 'v2'
         },
         storageLoaded: {
+          type: Boolean,
+          value: false
+        },
+        dataLoaded: {
           type: Boolean,
           value: false
         },
@@ -451,9 +572,29 @@
           value: true
         }
       },
+
+      listeners: {
+        'iron-resize': '_onIronResize'
+      },
+
       // When ready call API to get video of the month Id
       ready: function(){
         this.$.requestVideoOfTheMonth.generateRequest();
+      },
+      attached: function() {
+        this.async(this.notifyResize, 1);
+      },
+      // Resize listeners
+      _onIronResize: function() {
+        var w = this.offsetWidth;
+        //console.log("resized : width = " + w);
+        if (this.dataLoaded) {
+          if (w < 900) {
+            this.$.toastFilters.close();
+          } else {
+            this.$.toastFilters.open();
+          }
+        }
       },
       // Initialise local strage with default lang (fi)
       initializeDefaultStorage: function() {
@@ -492,6 +633,7 @@
         // Once the dom changes have stopped, stop spinner, show toast, etc.
         this.debounce('doSomething', function () {
           //console.log('Debounce...');
+          this.dataLoaded = true;
           this.$.spinner.active = false;
           this.$.toastFilters.open();
 
@@ -513,6 +655,9 @@
         }, 300);
       },
       // UI Localisation functions
+      languageFinnish: function() {
+        return (this.language == "fi");
+      },
       localisedTitle: function() {
         return (this.language == "fi") ? "title_FIN.png" : "title.png";
       },
@@ -635,72 +780,72 @@
         switch (e.target.dataset.args) {
           case "1_1":
               d = this.filter1_1 ? "none" : "inline";
-              op = this.filter1_1 ? "0.5" : "1.0";
+              op = this.filter1_1 ? "0.3" : "1.0";
               this.filter1_1 = !this.filter1_1;
               break;
           case "1_2":
               d = this.filter1_2 ? "none" : "inline";
-              op = this.filter1_2 ? "0.5" : "1.0";
+              op = this.filter1_2 ? "0.3" : "1.0";
               this.filter1_2 = !this.filter1_2;
               break;
           case "1_3":
               d = this.filter1_3 ? "none" : "inline";
-              op = this.filter1_3 ? "0.5" : "1.0";
+              op = this.filter1_3 ? "0.3" : "1.0";
               this.filter1_3 = !this.filter1_3;
               break;
           case "1_4":
               d = this.filter1_4 ? "none" : "inline";
-              op = this.filter1_4 ? "0.5" : "1.0";
+              op = this.filter1_4 ? "0.3" : "1.0";
               this.filter1_4 = !this.filter1_4;
               break;
           case "2_1":
               d = this.filter2_1 ? "none" : "inline";
-              op = this.filter2_1 ? "0.5" : "1.0";
+              op = this.filter2_1 ? "0.3" : "1.0";
               this.filter2_1 = !this.filter2_1;
               break;
           case "2_2":
               d = this.filter2_2 ? "none" : "inline";
-              op = this.filter2_2 ? "0.5" : "1.0";
+              op = this.filter2_2 ? "0.3" : "1.0";
               this.filter2_2 = !this.filter2_2;
               break;
           case "2_3":
               d = this.filter2_3 ? "none" : "inline";
-              op = this.filter2_3 ? "0.5" : "1.0";
+              op = this.filter2_3 ? "0.3" : "1.0";
               this.filter2_3 = !this.filter2_3;
               break;
           case "2_4":
               d = this.filter2_4 ? "none" : "inline";
-              op = this.filter2_4 ? "0.5" : "1.0";
+              op = this.filter2_4 ? "0.3" : "1.0";
               this.filter2_4 = !this.filter2_4;
               break;
           case "2_5":
               d = this.filter2_5 ? "none" : "inline";
-              op = this.filter2_5 ? "0.5" : "1.0";
+              op = this.filter2_5 ? "0.3" : "1.0";
               this.filter2_5 = !this.filter2_5;
               break;
           case "3_1":
               d = this.filter3_1 ? "none" : "inline";
-              op = this.filter3_1 ? "0.5" : "1.0";
+              op = this.filter3_1 ? "0.3" : "1.0";
               this.filter3_1 = !this.filter3_1;
               break;
           case "3_2":
               d = this.filter3_2 ? "none" : "inline";
-              op = this.filter3_2 ? "0.5" : "1.0";
+              op = this.filter3_2 ? "0.3" : "1.0";
               this.filter3_2 = !this.filter3_2;
               break;
           case "3_3":
               d = this.filter3_3 ? "none" : "inline";
-              op = this.filter3_3 ? "0.5" : "1.0";
+              op = this.filter3_3 ? "0.3" : "1.0";
               this.filter3_3 = !this.filter3_3;
               break;
           case "4_1":
               d = this.filter4_1 ? "none" : "inline";
-              op = this.filter4_1 ? "0.5" : "1.0";
+              op = this.filter4_1 ? "0.3" : "1.0";
               this.filter4_1 = !this.filter4_1;
               break;
           case "4_2":
               d = this.filter4_2 ? "none" : "inline";
-              op = this.filter4_2 ? "0.5" : "1.0";
+              op = this.filter4_2 ? "0.3" : "1.0";
               this.filter4_2 = !this.filter4_2;
               break;
         }
@@ -765,14 +910,14 @@
 
         var dialog = '#commentDialog' + id;
         this.$$(dialog).close();
-        alert (this.localisedCommentSucceeded);
+        alert (this.localisedCommentSucceeded());
       },
       // Handle response from API after comment, display message close dialog on success.
       handleResponsePropose: function (data) {
         console.log("propose response : " + JSON.stringify(data.detail.response));
         console.log("propose response id " + data.detail.response.id);
         this.$$("#proposeDialog").close();
-        alert (this.localisedProposeSucceeded);
+        alert (this.localisedProposeSucceeded());
       },
       // function used to submit comment form
       submitComment: function(event) {
@@ -787,7 +932,7 @@
         });
         form.addEventListener('iron-form-error', function(event) {
           //console.log("comment form error response");
-          alert (this.localisedCommentFailed);
+          alert (this.localisedCommentFailed());
         });
         //console.log("submit form function called : ") ;
         form.submit();
@@ -805,7 +950,7 @@
         });
         form.addEventListener('iron-form-error', function(event) {
           //console.log("comment form error response");
-          alert (this.localisedProposeFailed);
+          alert (this.localisedProposeFailed());
         });
         //console.log("submit form function called : ") ;
         form.submit();
