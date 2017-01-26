@@ -192,7 +192,7 @@
       <div class="container flex-horizontal">
         <div style="position: relative; left: 0; top: 0; min-width: 120px;">
           <!-- <img src="/pictures/futureDates.png" style="position: relative; top: 0; left: 0; margin: 50px 70px 30px 26px;"/> -->
-          <img src="/pictures/alpha.png" style="position: absolute; top: 0px; left: 0px;"/>
+          <img src="/pictures/beta.png" style="position: absolute; top: 0px; left: 0px;"/>
         </div>
         <div class="flexchild">
           <img src="/pictures/{{localisedTitle()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
@@ -203,7 +203,7 @@
                 </br>
                 <p class="info">{{localisedP2()}}</p>
                 </br>
-                <!--  <paper-button on-tap="handleEventPropose" style="background-color: #F8E81C; border-radius: 0; margin: 0;">{{localisedPropose()}}</paper-button> -->
+                <paper-button on-tap="handleEventPropose" style="background-color: #F8E81C; border-radius: 0; margin: 0;">{{localisedPropose()}}</paper-button>
                 <paper-dialog class="input-dialog" id="proposeDialog" modal>
                    <p>{{localisedProposeDescription()}}</p>
                    <form is="iron-form" id="propose" method="post" content-type="application/json" action="{{getProposeURL}}" on-iron-form-response="handleResponsePropose">
@@ -336,7 +336,9 @@
                          </p>
                       </div>
                       <div class="event-footer">
-                           <!-- <paper-button on-tap="handleEventComment">Comment</paper-button> -->
+                           <!-- <paper-button on-tap="handleEventComment">Comment</paper-button>
+                          <paper-icon-button id="comment-button" icon="comment" on-tap="handleEventComment"></paper-icon-button>
+                          <paper-icon-button id="share-button" icon="share" on-tap="handleEventShare"></paper-icon-button> -->
 
                           <!-- <paper-button raised onclick="modal{{eventItem.id}}.open()">Comment</paper-button> -->
                           <paper-dialog class="input-dialog" id="commentDialog[[eventItem.id]]" modal>
@@ -674,7 +676,7 @@
         return (this.language == "fi") ? "Kuukauden video" : "Video of the month";
       },
       localisedPropose: function() {
-        return (this.language == "fi") ? "Ehdota tapahtumaa" : "Suggest an event";
+        return (this.language == "fi") ? "Ehdota" : "Propose";
       },
       localisedComment: function() {
         return (this.language == "fi") ? "Kommentoi" : "Comment";
@@ -885,6 +887,13 @@
         var id = event.model.eventItem.id;
         //console.log("open comment dialog for event : " + id);
         var dialog = '#commentDialog' + id;
+        this.$$(dialog).open();
+      },
+      handleEventShare: function(event, detail, sender) {
+        //console.log("share tap event");
+        var id = event.model.eventItem.id;
+        //console.log("open share dialog for event : " + id);
+        var dialog = '#shareDialog' + id;
         this.$$(dialog).open();
       },
       handleEventPropose: function(event, detail, sender) {
