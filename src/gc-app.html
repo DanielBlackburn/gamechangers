@@ -248,6 +248,8 @@
         <!-- Events template -->
         <template is="dom-repeat" items="{{item.events}}" sort="sortEvents" as="eventItem">
 
+          <template is="dom-if" if="{{filtered(eventItem.type,filterChanged)}}">
+
           <div class$="[[eventItem.type]]" id$="eventDiv[[eventItem.id]]">
            <div class="container flex-horizontal">
 
@@ -336,11 +338,10 @@
                          </p>
                       </div>
                       <div class="event-footer">
-                           <!-- <paper-button on-tap="handleEventComment">Comment</paper-button>
-                          <paper-icon-button id="comment-button" icon="comment" on-tap="handleEventComment"></paper-icon-button>
-                          <paper-icon-button id="share-button" icon="share" on-tap="handleEventShare"></paper-icon-button> -->
-
-                          <!-- <paper-button raised onclick="modal{{eventItem.id}}.open()">Comment</paper-button> -->
+                           <div class="buttons">
+                             <paper-icon-button id="comment-button" icon="comment" on-tap="handleEventComment"></paper-icon-button>
+                             <paper-icon-button id="share-button" icon="share" on-tap="handleEventShare"></paper-icon-button>
+                          </div>
                           <paper-dialog class="input-dialog" id="commentDialog[[eventItem.id]]" modal>
                             <p>{{localisedCommentDescription()}}</p>
                             <form is="iron-form" id="form[[eventItem.id]]" method="post" content-type="application/json" action="{{getCommentURL}}" on-iron-form-response="handleResponseComment">
@@ -352,9 +353,11 @@
                                   <paper-button dialog-dismiss>{{localisedCancel()}}</paper-button>
                                   <paper-button raised autofocus on-tap="submitComment">{{localisedSubmit()}}</paper-button>
                             </form>
-                            <div class="buttons">
-
-                            </div>
+                          </paper-dialog>
+                          <paper-dialog class="share-dialog" id="shareDialog[[eventItem.id]]">
+                            <p>{{localisedShareDescription()}}</p>
+                            <textarea id="shareText[[eventItem.id]]" rows="1" cols="50">https://gamechangers.aalto.fi/?event=[[eventItem.id]]</textarea>
+                            <p> </p>
                           </paper-dialog>
 
                       </div>
@@ -414,7 +417,7 @@
 
            </div>
           </div>
-
+          </template>
           </template>
 
         </div>
@@ -427,22 +430,21 @@
   </div>
 
   <!-- Persistant toast bar used for filter buttons (Maybe add hide/collapsable area for buttons in the toast) -->
-
     <paper-toast id="toastFilters" duration="0" text="">
-      <paper-icon-button id="filter_button_1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter" data-args="1_1"></paper-icon-button>
-      <paper-icon-button id="filter_button_1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter" data-args="1_2"></paper-icon-button>
-      <paper-icon-button id="filter_button_1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter" data-args="1_3"></paper-icon-button>
-      <paper-icon-button id="filter_button_1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter" data-args="1_4"></paper-icon-button>
-      <paper-icon-button id="filter_button_2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter" data-args="2_1"></paper-icon-button>
-      <paper-icon-button id="filter_button_2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter" data-args="2_2"></paper-icon-button>
-      <paper-icon-button id="filter_button_2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter" data-args="2_3"></paper-icon-button>
-      <paper-icon-button id="filter_button_2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter" data-args="2_4"></paper-icon-button>
-      <paper-icon-button id="filter_button_2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter" data-args="2_5"></paper-icon-button>
-      <paper-icon-button id="filter_button_3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter" data-args="3_1"></paper-icon-button>
-      <paper-icon-button id="filter_button_3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter" data-args="3_2"></paper-icon-button>
-      <paper-icon-button id="filter_button_3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter" data-args="3_3"></paper-icon-button>
-      <paper-icon-button id="filter_button_4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter" data-args="4_1"></paper-icon-button>
-      <paper-icon-button id="filter_button_4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter" data-args="4_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_1" src="/icns/_1_1_admin.svg" on-tap="handleFilter1_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_2" src="/icns/_1_2_campus.svg" on-tap="handleFilter1_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_3" src="/icns/_1_3_students.svg" on-tap="handleFilter1_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_1_4" src="/icns/_1_4_teaching.svg" on-tap="handleFilter1_4"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_1" src="/icns/_2_1_art_and_design.svg" on-tap="handleFilter2_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_2" src="/icns/_2_2_science_and_technology.svg" on-tap="handleFilter2_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_3" src="/icns/_2_3_business.svg" on-tap="handleFilter2_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_4" src="/icns/_2_4_research.svg" on-tap="handleFilter2_4"></paper-icon-button>
+      <paper-icon-button id="filter_button_2_5" src="/icns/_2_5_multidisciplinarity.svg" on-tap="handleFilter2_5"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_1" src="/icns/_3_1_entrepreneurship.svg" on-tap="handleFilter3_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_2" src="/icns/_3_2_corporate_collaboration.svg" on-tap="handleFilter3_2"></paper-icon-button>
+      <paper-icon-button id="filter_button_3_3" src="/icns/_3_3_academic_collaboration.svg" on-tap="handleFilter3_3"></paper-icon-button>
+      <paper-icon-button id="filter_button_4_1" src="/icns/_4_1_global_event.svg" on-tap="handleFilter4_1"></paper-icon-button>
+      <paper-icon-button id="filter_button_4_2" src="/icns/_4_2_regional_event.svg" on-tap="handleFilter4_2"></paper-icon-button>
     </paper-toast>
 
     <!--    </parallax-container> -->
@@ -517,61 +519,25 @@
           type: Number,
           value: 0
         },
-        filter1_1: {
+        filterChanged: {
           type: Boolean,
-          value: true
+          value: false
         },
-        filter1_2: {
-          type: Boolean,
-          value: true
+        filters: {
+          type: Array,
+          value: [true,true,true,true,true,true,true,true,true,true,true,true,true,true]
         },
-        filter1_3: {
-          type: Boolean,
-          value: true
+        filterNames: {
+          type: Array,
+          value: ["1_1","1_2","1_3","1_4","2_1","2_2","2_3","2_4","2_5","3_1","3_2","3_3","4_1","4_2"]
         },
-        filter1_4: {
-          type: Boolean,
-          value: true
+        eventTypes: {
+          type: Array,
+          value: ["_1_1_admin","_1_2_campus","_1_3_students","_1_4_teaching","_2_1_art_and_design","_2_2_science_and_technology","_2_3_business","_2_4_research","_2_5_multidisciplinarity","_3_1_entrepreneurship","_3_2_corporate_collaboration","_3_3_academic_collaboration","_4_1_global_event","_4_2_regional_event"]
         },
-        filter2_1: {
-          type: Boolean,
-          value: true
-        },
-        filter2_2: {
-          type: Boolean,
-          value: true
-        },
-        filter2_3: {
-          type: Boolean,
-          value: true
-        },
-        filter2_4: {
-          type: Boolean,
-          value: true
-        },
-        filter2_5: {
-          type: Boolean,
-          value: true
-        },
-        filter3_1: {
-          type: Boolean,
-          value: true
-        },
-        filter3_2: {
-          type: Boolean,
-          value: true
-        },
-        filter3_3: {
-          type: Boolean,
-          value: true
-        },
-        filter4_1: {
-          type: Boolean,
-          value: true
-        },
-        filter4_2: {
-          type: Boolean,
-          value: true
+        eventColours: {
+          type: Array,
+          value: ["#007DC8","#007DC8","#007DC8","#007DC8","#BA269A","#BA269A","#BA269A","#BA269A","#BA269A","#FF9A00","#FF9A00","#FF9A00","#6BB100","#6BB100"]
         }
       },
 
@@ -638,10 +604,6 @@
           this.dataLoaded = true;
           this.$.spinner.active = false;
           this.$.toastFilters.open();
-
-          // open event if event id passed in route
-          //console.log('this.queryParams', this.queryParams);
-          //console.log('this.queryParams.event', this.queryParams.event);
 
           if (this.queryParams.event) {
             //console.log('Deep link...');
@@ -714,7 +676,9 @@
       localisedSubmit: function() {
         return (this.language == "fi") ? "Lähetä" : "Submit";
       },
-
+      localisedShareDescription: function() {
+        return (this.language == "fi") ? "Jaa linkki alta haluamaasi some-kanavaan" : "Share link from below to a channel of you choice";
+      },
       // Function to check if an array is empty
       arrayEmpty: function(array) {
         return array.length == 0;
@@ -773,91 +737,60 @@
       sortEras: function (a, b) {
           return parseFloat(b.from) - parseFloat(a.from);
       },
-      // Toggle event cards visibility based on event types
-      handleFilter: function(e) {
-        var filter = "--display" + e.target.dataset.args;
-        var selector = "#filter_button_" + e.target.dataset.args;
-        var d;
-        var op;
-        switch (e.target.dataset.args) {
-          case "1_1":
-              d = this.filter1_1 ? "none" : "inline";
-              op = this.filter1_1 ? "0.3" : "1.0";
-              this.filter1_1 = !this.filter1_1;
-              break;
-          case "1_2":
-              d = this.filter1_2 ? "none" : "inline";
-              op = this.filter1_2 ? "0.3" : "1.0";
-              this.filter1_2 = !this.filter1_2;
-              break;
-          case "1_3":
-              d = this.filter1_3 ? "none" : "inline";
-              op = this.filter1_3 ? "0.3" : "1.0";
-              this.filter1_3 = !this.filter1_3;
-              break;
-          case "1_4":
-              d = this.filter1_4 ? "none" : "inline";
-              op = this.filter1_4 ? "0.3" : "1.0";
-              this.filter1_4 = !this.filter1_4;
-              break;
-          case "2_1":
-              d = this.filter2_1 ? "none" : "inline";
-              op = this.filter2_1 ? "0.3" : "1.0";
-              this.filter2_1 = !this.filter2_1;
-              break;
-          case "2_2":
-              d = this.filter2_2 ? "none" : "inline";
-              op = this.filter2_2 ? "0.3" : "1.0";
-              this.filter2_2 = !this.filter2_2;
-              break;
-          case "2_3":
-              d = this.filter2_3 ? "none" : "inline";
-              op = this.filter2_3 ? "0.3" : "1.0";
-              this.filter2_3 = !this.filter2_3;
-              break;
-          case "2_4":
-              d = this.filter2_4 ? "none" : "inline";
-              op = this.filter2_4 ? "0.3" : "1.0";
-              this.filter2_4 = !this.filter2_4;
-              break;
-          case "2_5":
-              d = this.filter2_5 ? "none" : "inline";
-              op = this.filter2_5 ? "0.3" : "1.0";
-              this.filter2_5 = !this.filter2_5;
-              break;
-          case "3_1":
-              d = this.filter3_1 ? "none" : "inline";
-              op = this.filter3_1 ? "0.3" : "1.0";
-              this.filter3_1 = !this.filter3_1;
-              break;
-          case "3_2":
-              d = this.filter3_2 ? "none" : "inline";
-              op = this.filter3_2 ? "0.3" : "1.0";
-              this.filter3_2 = !this.filter3_2;
-              break;
-          case "3_3":
-              d = this.filter3_3 ? "none" : "inline";
-              op = this.filter3_3 ? "0.3" : "1.0";
-              this.filter3_3 = !this.filter3_3;
-              break;
-          case "4_1":
-              d = this.filter4_1 ? "none" : "inline";
-              op = this.filter4_1 ? "0.3" : "1.0";
-              this.filter4_1 = !this.filter4_1;
-              break;
-          case "4_2":
-              d = this.filter4_2 ? "none" : "inline";
-              op = this.filter4_2 ? "0.3" : "1.0";
-              this.filter4_2 = !this.filter4_2;
-              break;
-        }
-        //console.log("filter : " + filter + " equals " + d);
-        //this.$$(commentDiv).style.src='none'
-
-        //console.log("button equals " + selector + " and op equals " + op + " filter equals " + filter);
+      // return whether the filter for the supplied event type is on or off
+      filtered: function (type, updated) {
+        var i = this.eventTypes.indexOf(type);
+        return this.filters[i] ? true : false;
+      },
+      // Toggle event cards visibility and filter icon opacity based on event type
+      handleFilter1_1: function(e) {
+        this.toggleFilter(0);
+      },
+      handleFilter1_2: function(e) {
+        this.toggleFilter(1);
+      },
+      handleFilter1_3: function(e) {
+        this.toggleFilter(2);
+      },
+      handleFilter1_4: function(e) {
+        this.toggleFilter(3);
+      },
+      handleFilter2_1: function(e) {
+        this.toggleFilter(4);
+      },
+      handleFilter2_2: function(e) {
+        this.toggleFilter(5);
+      },
+      handleFilter2_3: function(e) {
+        this.toggleFilter(6);
+      },
+      handleFilter2_4: function(e) {
+        this.toggleFilter(7);
+      },
+      handleFilter2_5: function(e) {
+        this.toggleFilter(8);
+      },
+      handleFilter3_1: function(e) {
+        this.toggleFilter(9);
+      },
+      handleFilter3_2: function(e) {
+        this.toggleFilter(10);
+      },
+      handleFilter3_3: function(e) {
+        this.toggleFilter(11);
+      },
+      handleFilter4_1: function(e) {
+        this.toggleFilter(12);
+      },
+      handleFilter4_2: function(e) {
+        this.toggleFilter(13);
+      },
+      toggleFilter: function(filter) {
+        var selector = "#filter_button_" + this.filterNames[filter];
+        var op = this.filters[filter] ? "0.3" : "1.0";
+        this.filters[filter] = !this.filters[filter];
         this.$$(selector).style.opacity = op;
-        this.customStyle[filter] = d;
-        this.updateStyles();
+        this.filterChanged = !this.filterChanged;
       },
       // Toggle event card collapse on tap based on ID
       handleEventCollapse: function(event, detail, sender) {
@@ -889,12 +822,29 @@
         var dialog = '#commentDialog' + id;
         this.$$(dialog).open();
       },
+      // Copy link to clipboard and open share dialog
       handleEventShare: function(event, detail, sender) {
         //console.log("share tap event");
         var id = event.model.eventItem.id;
         //console.log("open share dialog for event : " + id);
         var dialog = '#shareDialog' + id;
         this.$$(dialog).open();
+/*
+        //var link = "https://gamechangers.aalto.fi/?event=" + id;
+        //document.execCommand('copy',false,link);
+        var sharetext = '#shareText' + id;
+        //this.$$(sharetext).select();
+        document.getElementById('sharetext').select();
+
+        try {
+          // Now that we've selected the anchor text, execute the copy command
+          var successful = document.execCommand('copy');
+          var msg = successful ? 'successful' : 'unsuccessful';
+          console.log('Copy command was ' + msg);
+        } catch(err) {
+          console.log('unable to copy');
+        }
+*/
       },
       handleEventPropose: function(event, detail, sender) {
         this.$$("#proposeDialog").open();
@@ -913,18 +863,14 @@
       // Handle response from API after comment, display message close dialog on success.
       handleResponseComment: function (data) {
         var id = event.model.eventItem.id;
-        //console.log("close comment dialog for event : " + id);
-        //console.log("comment response : " + JSON.stringify(data.detail.response));
-        //console.log("comment response id " + data.detail.response.id);
-
         var dialog = '#commentDialog' + id;
         this.$$(dialog).close();
         alert (this.localisedCommentSucceeded());
       },
       // Handle response from API after comment, display message close dialog on success.
       handleResponsePropose: function (data) {
-        console.log("propose response : " + JSON.stringify(data.detail.response));
-        console.log("propose response id " + data.detail.response.id);
+        //console.log("propose response : " + JSON.stringify(data.detail.response));
+        //console.log("propose response id " + data.detail.response.id);
         this.$$("#proposeDialog").close();
         alert (this.localisedProposeSucceeded());
       },
@@ -967,61 +913,15 @@
       // return the colour based on suplied event type
       eventColour: function (type) {
         var c;
-        switch (type) {
-          case "_1_1_admin":
-              c = "#007DC8";
-              break;
-          case "_1_2_campus":
-              c = "#007DC8";
-              break;
-          case "_1_3_students":
-              c = "#007DC8";
-              break;
-          case "_1_4_teaching":
-              c = "#007DC8";
-              break;
-
-          case "_2_1_art_and_design":
-              c = "#BA269A";
-              break;
-          case "_2_2_science_and_technology":
-              c = "#BA269A";
-              break;
-          case "_2_3_business":
-              c = "#BA269A";
-              break;
-          case "_2_4_research":
-              c = "#BA269A";
-              break;
-          case "_2_5_multidisciplinarity":
-              c = "#BA269A";
-              break;
-
-          case "_3_1_entrepreneurship":
-              c = "#FF9A00";
-              break;
-          case "_3_2_corporate_collaboration":
-              c = "#FF9A00";
-              break;
-          case "_3_3_academic_collaboration":
-              c = "#FF9A00";
-              break;
-
-          case "_4_1_global_event":
-              c = "#6BB100";
-              break;
-          case "_4_2_regional_event":
-              c = "#6BB100";
-              break;
-
-          default:
-              c = "#9B9B9B";
+        var i = this.eventTypes.indexOf(type);
+        if (i == -1) {
+          c = "#9B9B9B";
+        } else {
+          c = this.eventColours[i];
         }
         return c;
       },
-      // return year string of timestamp supplied  *** change this to only return the first instance of each year
-      // ie use global array to keep track of already returned years and not return those strings
-      // Also need to use  var n = str.endsWith("0"); to check for decades, so decade can have larger font size.
+      // return year string of timestamp supplied
       eventYear: function (timestamp) {
         var d = new Date(timestamp);
         return d.getFullYear();

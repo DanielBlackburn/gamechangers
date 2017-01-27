@@ -1,6 +1,5 @@
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed"> -->
 
 <!-- shared styles for all views -->
 <dom-module id="gc-styles">
@@ -248,66 +247,6 @@
 
       }
 
-      ._1_1_admin{
-        display: var(--display1_1, inline);
-        background-color: white;
-      }
-
-      ._1_2_campus{
-        display: var(--display1_2, inline);
-        background-color: green;
-      }
-
-      ._1_3_students{
-        display: var(--display1_3, inline);
-        background-color: blue;
-      }
-
-      ._1_4_teaching{
-        display: var(--display1_4, inline);
-        background-color: red;
-      }
-
-      ._2_1_art_and_design{
-        display: var(--display2_1, inline);
-      }
-
-      ._2_2_science_and_technology{
-        display: var(--display2_2, inline);
-      }
-
-      ._2_3_business{
-        display: var(--display2_3, inline);
-      }
-
-      ._2_4_research{
-        display: var(--display2_4, inline);
-      }
-
-      ._2_5_multidisciplinarity{
-        display: var(--display2_5, inline);
-      }
-
-      ._3_1_entrepreneurship{
-        display: var(--display3_1, inline);
-      }
-
-      ._3_2_corporate_collaboration{
-        display: var(--display3_2, inline);
-      }
-
-      ._3_3_academic_collaboration{
-        display: var(--display3_3, inline);
-      }
-
-      ._4_1_global_event{
-        display: var(--display4_1, inline);
-      }
-
-      ._4_2_regional_event{
-        display: var(--display4_2, inline);
-      }
-
       .menuButtons {
         position: absolute;
         right: 0;
@@ -326,7 +265,10 @@
         position: absolute;
         right: 0;
         top: 240px;
-        margin: 0;
+        margin: 0 12px 0 0;
+        background-color: #9B9B9B;
+        border-radius: 20px;
+        opacity: 0.75;
       }
 
       #toastFilters {
@@ -334,8 +276,15 @@
         margin-left: calc(50vw - 330px);
       }
 
+      .buttons {
+        position: absolute;
+        right: 0;
+        left: auto;
+      }
+
       #share-button {
         right: 0;
+        margin-right: 12px;
       }
 
       #comment-button {
@@ -379,11 +328,6 @@
         color: #9B9B9B;
         margin: 12px;
       }
-
-
-
-
-
 
     </style>
   </template>
