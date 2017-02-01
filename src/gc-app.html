@@ -140,7 +140,8 @@
                   Terhi Olllikainen<br>
                   Mikko Raskinen<br>
                   Anu Salmi-Savilampi<br>
-                  Laura Siira<br><br>
+                  Laura Siira<br>
+                  Tuuli Sotamaa<br><br>
                   Verkkosovellus<br>
                   Tuomo Tammenpää<br>
                   Daniel Blackburn<br>
@@ -167,7 +168,8 @@
                   Terhi Olllikainen<br>
                   Mikko Raskinen<br>
                   Anu Salmi-Savilampi<br>
-                  Laura Siira<br><br>
+                  Laura Siira<br>
+                  Tuuli Sotamaa<br><br>
                   Webapp<br>
                   Tuomo Tammenpää<br>
                   Daniel Blackburn<br>
@@ -242,7 +244,9 @@
     <div id="timeline" on-dom-change="eraDOM">
     <template  is="dom-repeat" items="{{eras}}" sort="sortEras" >
 
-      <div class="era" style="background:url([[item.images.0.url]]) no-repeat;">
+      <!-- <div class="era" style="background:url([[item.images.0.url]]) no-repeat;"> -->
+      <div class="era" style="background-image: url([[arrayItem(item.images.*, 0,'url')]]); background-repeat: no-repeat;">
+
         <p class="eraName"> {{item.name}} </p>
 
         <!-- Events template -->
@@ -304,7 +308,7 @@
                       <span class="buttontext">{{eventItem.name}}</span>
                     </paper-button>
                   </div>
-                  <iron-collapse id$="collapse{{eventItem.id}}" style$="width:100%;">
+                  <iron-collapse id$="collapse{{eventItem.id}}" style="width:100%;">
                       <!-- Image div need to be conditional on images being present. also add icon button to go full screen -->
                       <template is="dom-if" if="{{!arrayEmpty(eventItem.images)}}">
                         <div class="event-image">
@@ -629,13 +633,13 @@
         return (this.language == "fi") ? "Tervetuloa!" : "Welcome!";
       },
       localisedP1: function() {
-        return (this.language == "fi") ? "Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen." : "This is a timeline of events from the history of Aalto University and its predecessor schools, that has had an impact for the Finnish society. Here are some historical milestones together with a few impactful chain of events, but this is just a start. Now  we reach out to the community. That is you. Share your insight.";
+        return (this.language == "fi") ? "Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen." : "The Aalto timeline tells a story visualising and describing Game Changers, which can be events and innovations, derived from Aalto University and its predecessors. Or people, who have had a great impact on Aalto and the Finnish society.";
       },
       localisedP2: function() {
-        return (this.language == "fi") ? "Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jakaaksesi ajatuksesi liiku aikajanalla haluamaasi vuoteen ja ehdota lisättäväksi aihetta ja taustatietoja. Voit myös kirjoittaa kommenttikenttään anekdootteja jo kuvatuista aiheista. Odotamme panostasi, suurkiitos siitä etukäteen!" : "Scroll down the time and suggest a topic you think should be included. Please remember that the perspective here is “a game changer”, so we are looking for themes that have been enablers for disruptions. You can also suggest an anecdote directly regarding an event on the timeline. Thank you for your help.";
+        return (this.language == "fi") ? "Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jos aikajanalta puuttuu jotain, klikkaa ehdota-nappia alla ja kerro meille. Voit myös lähettää anekdootin suoraan liittyen aikajanalla oleviin tapahtumiin. Odotamme panostasi, suurkiitos siitä etukäteen!" : "The timeline is gradually evolving, therefore, we reach out to you to give your contribution in telling the Aalto story from 1849 to date, and into the future. Share your ideas with us! If something is missing from the timeline, click the propose button below and tell us. You can also suggest an anecdote related to an event on the timeline already. We look forward to your comments. Many thanks for your input!";
       },
       localisedVideoH1: function() {
-        return (this.language == "fi") ? "Kuukauden video" : "Video of the month";
+        return (this.language == "fi") ? "Uusin Muutoksentekijät -video" : "Latest Game Changers video";
       },
       localisedPropose: function() {
         return (this.language == "fi") ? "Ehdota" : "Propose";
@@ -682,6 +686,10 @@
       // Function to check if an array is empty
       arrayEmpty: function(array) {
         return array.length == 0;
+      },
+      arrayItem: function(arry, index, path) {
+        //console.log("background url : " + this.get(path, arry.base[index]));
+        return this.get(path, arry.base[index]);
       },
       // Format the image array for image-slider, just urls, no captions
       formatImageArray: function(array) {
@@ -798,11 +806,23 @@
         var selector = '#collapse' + id;
         var commentDiv = '#comment' + id;
         var associationsDiv = '#associations' + id;
+
         if (this.$$(selector).opened) {
-          this.$$(commentDiv).style.display='none'
+          try {
+            this.$$(commentDiv).style.display='none'
+          } catch(e) {
+            // commentDiv not create/active
+            //console.log("caught collapse comment div excpetion");
+          }
+
           this.$$(associationsDiv).style.display='none'
         } else {
-          this.$$(commentDiv).style.display='flex'
+          try {
+            this.$$(commentDiv).style.display='flex'
+          } catch(e) {
+            // commentDiv not create/active
+            //console.log("caught collapse comment div excpetion");
+          }
           this.$$(associationsDiv).style.display='flex'
         }
         this.$$(selector).toggle();
@@ -861,14 +881,14 @@
         this.$$(dialog).open();
       },
       // Handle response from API after comment, display message close dialog on success.
-      handleResponseComment: function (data) {
+      handleResponseComment: function (event) {
         var id = event.model.eventItem.id;
         var dialog = '#commentDialog' + id;
         this.$$(dialog).close();
         alert (this.localisedCommentSucceeded());
       },
       // Handle response from API after comment, display message close dialog on success.
-      handleResponsePropose: function (data) {
+      handleResponsePropose: function (event) {
         //console.log("propose response : " + JSON.stringify(data.detail.response));
         //console.log("propose response id " + data.detail.response.id);
         this.$$("#proposeDialog").close();
