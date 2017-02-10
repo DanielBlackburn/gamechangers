@@ -197,7 +197,12 @@
           <img src="/pictures/beta.png" style="position: absolute; top: 0px; left: 0px;"/>
         </div>
         <div class="flexchild">
-          <img src="/pictures/{{localisedTitle()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
+          <template is="dom-if" if="{{largeViewport}}">
+            <img src="/pictures/{{localisedTitle()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
+          </template>
+          <template is="dom-if" if="{{!largeViewport}}">
+            <img src="/pictures/{{localisedTitleMobile()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px;"/>
+          </template>
             <div class="container flex-horizontal">
               <div class="flexchild">
                 <h1 class="info">{{localisedH1()}}</h1>
@@ -241,8 +246,8 @@
     <paper-spinner-lite active id="spinner" alt="Loading timeline"></paper-spinner-lite>
 
     <!-- Timeline template -->
-    <div id="timeline" on-dom-change="eraDOM">
-    <template  is="dom-repeat" items="{{eras}}" sort="sortEras" >
+    <div id="timeline" on-dom-change="eraDOM" style="margin-right: 8px">
+    <template  is="dom-repeat" items="{{eras}}" initial-count="8" sort="sortEras" >
 
       <!-- <div class="era" style="background:url([[item.images.0.url]]) no-repeat;"> -->
       <div class="era" style="background-image: url([[arrayItem(item.images.*, 0,'url')]]); background-repeat: no-repeat;">
@@ -371,6 +376,7 @@
             </div>
 
             <!-- Column 4 - associations -->
+            <template is="dom-if" if="{{largeViewport}}">
             <div class="flexchild">
               <div class="association-column">
                 <div class="events" id$="associations{{eventItem.id}}" style="display: none;">
@@ -383,8 +389,12 @@
                         <div class="event">
                           <div class="event-header" style$="background-color: {{eventColour(association.type)}};">
                             <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px;">
-                              <!-- <iron-icon icon={{eventItem.type}} style="margin-right: 8px;"></iron-icon> -->
-                              <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px;"></iron-icon>
+                              <template is="dom-if" if="{{association.type}}">
+                                <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px;"></iron-icon>
+                              </template>
+                              <template is="dom-if" if="{{!association.type}}">
+                                <iron-icon src="/icns/{{association._type}}.svg" style="margin-right: 8px;"></iron-icon>
+                              </template>
                               <span class="buttontext">{{association.name}}</span>
                             </paper-button>
                           </div>
@@ -405,7 +415,9 @@
                               </template>
 
                               <div class="event-text">
+                                <template is="dom-if" if="{{association.from}}">
                                  <p>{{eventYear(association.from)}}</p>
+                               </template>
                                  <p style="font-weight: bold;">{{association.name}}</p>
                                  <p>{{association.notes}}</p>
                               </div>
@@ -418,6 +430,7 @@
                 </div>
               </div>
             </div>
+            </template>
 
            </div>
           </div>
@@ -628,6 +641,9 @@
       },
       localisedTitle: function() {
         return (this.language == "fi") ? "title_FIN.png" : "title.png";
+      },
+      localisedTitleMobile: function() {
+        return (this.language == "fi") ? "title_FIN_mobile.png" : "title_mobile.png";
       },
       localisedH1: function() {
         return (this.language == "fi") ? "Tervetuloa!" : "Welcome!";

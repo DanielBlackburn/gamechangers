@@ -2706,18 +2706,19 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
         position: relative;
         width: 100%;
         height: 70vh;
+        top: 30px;
       }
 
       footer {
-        position: absolute;
-        left: 0;
-        bottom: 0;
+
       }
 
       p {
+        position: relative;
         font-size: 16px;
-        margin: 10px 70px 10px 70px;
+        margin: 30px 70px 0px 70px;
         text-align: center;
+        bottom: 0;
       }
 
       paper-icon-button.round {
@@ -2731,38 +2732,43 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
         top: 50%;
       }
 
+      paper-icon-button.notround {
+        padding: 2px;
+        margin: 5px;
+        top: 50%;
+      }
+
       .flex-horizontal {
         @apply(--layout-horizontal);
       }
       .flexchild {
         @apply(--layout-flex);
       }
-
     </style>
 
-    
+    <div style="position: relative">
 
       <div class="outer">
         <div class="container flex-horizontal">
-          <div class="leftButton">
-              <paper-icon-button src="/icns/chevron_left.svg" on-tap="prev" class="round"></paper-icon-button>
+          <div id="leftButton">
+              <paper-icon-button src="/icns/chevron_left.svg" on-tap="prev" class="notround"></paper-icon-button>
           </div>
           <div class="flexchild">
             <iron-image id="image" src="{{_arrayItem(images.*, currentPos)}}" title$="{{_arrayItem(images.*, currentPos)}}" sizing="contain" on-track="_handleTrack"></iron-image>
           </div>
-          <div class="rightButton">
-              <paper-icon-button src="/icns/chevron_right.svg" on-tap="next" class="round"></paper-icon-button>
+          <div id="rightButton">
+              <paper-icon-button src="/icns/chevron_right.svg" on-tap="next" class="notround"></paper-icon-button>
           </div>
         </div>
         <div class="footer">
-          <p> {{_arrayItem(captions.*, currentPos)}} </p>
+          <p class="footer"> {{_arrayItem(captions.*, currentPos)}} </p>
         </div>
       </div>
-  
+   </div>
 
   </template>
 
-  <script>Polymer({is:"image-slider",properties:{images:{type:Array,value:[],reflectToAttribute:!0,observer:"_onImagesChanged"},captions:{type:Array,value:[],reflectToAttribute:!0},currentPos:{type:Number,value:0,readonly:!0,observer:"_onCurrentPosChanged"},noBullets:{type:Boolean,value:!0},_imgsWithClass:{type:Array,value:[],readonly:!0}},prev:function(){this.currentPos>0?this.currentPos=this.currentPos-1:this.currentPos=this.images.length-1},next:function(){this.currentPos<this.images.length-1?this.currentPos=this.currentPos+1:this.currentPos=0},_handleTrack:function(t){switch(t.detail.state){case"end":t.detail.dx>100?this.prev():t.detail.dx<-100&&this.next()}},_changePos:function(t){this.currentPos=t.target.getAttribute("data-index")},_arrayItem:function(t,e){return t.base[e]},_onImagesChanged:function(){0==this.images.length?this.hidden=!0:(0==this.currentPos&&this._onCurrentPosChanged(),this.currentPos=0,this.hidden=!1)},_onCurrentPosChanged:function(){var t=this.currentPos;this._imgsWithClass=this.images.map(function(e,r){return{image:e,class:r==t?"active":""}})}});</script>
+  <script>Polymer({is:"image-slider",properties:{images:{type:Array,value:[],reflectToAttribute:!0,observer:"_onImagesChanged"},captions:{type:Array,value:[],reflectToAttribute:!0},currentPos:{type:Number,value:0,readonly:!0,observer:"_onCurrentPosChanged"},noBullets:{type:Boolean,value:!0},_imgsWithClass:{type:Array,value:[],readonly:!0}},prev:function(){this.currentPos>0?this.currentPos=this.currentPos-1:this.currentPos=this.images.length-1},next:function(){this.currentPos<this.images.length-1?this.currentPos=this.currentPos+1:this.currentPos=0},_handleTrack:function(t){switch(t.detail.state){case"end":t.detail.dx>100?this.prev():t.detail.dx<-100&&this.next()}},_changePos:function(t){this.currentPos=t.target.getAttribute("data-index")},_arrayItem:function(t,e){return t.base[e]},_onImagesChanged:function(){0==this.images.length?this.hidden=!0:(0==this.currentPos&&this._onCurrentPosChanged(),this.currentPos=0,this.hidden=!1,this.$.leftButton.hidden=1==this.images.length,this.$.rightButton.hidden=1==this.images.length)},_onCurrentPosChanged:function(){var t=this.currentPos;this._imgsWithClass=this.images.map(function(e,s){return{image:e,class:s==t?"active":""}})}});</script>
 </dom-module>
 <iron-iconset-svg name="icons" size="24">
   <svg>
@@ -3064,13 +3070,13 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
       }
 
       .association-column {
-          margin: 0px 10px 0px 0px;
+
       }
 
       .commentColumn {
         width: auto;
         min-width: 290px;
-        margin:0 auto;
+        margin: auto;
       }
 
       .comment {
@@ -3127,13 +3133,9 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
       .closeButton {
           position: absolute;
           top: 0;
-
           right: 0;
-
-          background-color: #9B9B9B;
-          border-radius: 20px;
           margin: 10px;
-          color: #000;
+          color: #fff;
       }
 
       .menuButtons {
@@ -3383,7 +3385,12 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
           <img src="/pictures/beta.png" style="position: absolute; top: 0px; left: 0px">
         </div>
         <div class="flexchild">
-          <img src="/pictures/{{localisedTitle()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px">
+          <template is="dom-if" if="{{largeViewport}}">
+            <img src="/pictures/{{localisedTitle()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px">
+          </template>
+          <template is="dom-if" if="{{!largeViewport}}">
+            <img src="/pictures/{{localisedTitleMobile()}}" style="position: relative; top: 20px; left: 0; margin: 60px 0px 60px 0px">
+          </template>
             <div class="container flex-horizontal">
               <div class="flexchild">
                 <h1 class="info">{{localisedH1()}}</h1>
@@ -3427,8 +3434,8 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
     <paper-spinner-lite active="" id="spinner" alt="Loading timeline"></paper-spinner-lite>
 
     
-    <div id="timeline" on-dom-change="eraDOM">
-    <template is="dom-repeat" items="{{eras}}" sort="sortEras">
+    <div id="timeline" on-dom-change="eraDOM" style="margin-right: 8px">
+    <template is="dom-repeat" items="{{eras}}" initial-count="8" sort="sortEras">
 
       
       <div class="era" style="background-image: url([[arrayItem(item.images.*, 0,'url')]]); background-repeat: no-repeat">
@@ -3557,6 +3564,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
             </div>
 
             
+            <template is="dom-if" if="{{largeViewport}}">
             <div class="flexchild">
               <div class="association-column">
                 <div class="events" id$="associations{{eventItem.id}}" style="display: none">
@@ -3569,8 +3577,12 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
                         <div class="event">
                           <div class="event-header" style$="background-color: {{eventColour(association.type)}};">
                             <paper-button id$="{{association.id}}" on-tap="handleAssociationCollapse" style="max-width: 330px">
-                              
-                              <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
+                              <template is="dom-if" if="{{association.type}}">
+                                <iron-icon src="/icns/{{association.type}}.svg" style="margin-right: 8px"></iron-icon>
+                              </template>
+                              <template is="dom-if" if="{{!association.type}}">
+                                <iron-icon src="/icns/{{association._type}}.svg" style="margin-right: 8px"></iron-icon>
+                              </template>
                               <span class="buttontext">{{association.name}}</span>
                             </paper-button>
                           </div>
@@ -3591,7 +3603,9 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
                               </template>
 
                               <div class="event-text">
+                                <template is="dom-if" if="{{association.from}}">
                                  <p>{{eventYear(association.from)}}</p>
+                               </template>
                                  <p style="font-weight: bold">{{association.name}}</p>
                                  <p>{{association.notes}}</p>
                               </div>
@@ -3604,6 +3618,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
                 </div>
               </div>
             </div>
+            </template>
 
            </div>
           </div>
@@ -3645,7 +3660,7 @@ n&&e.updateNativeStyleProperties(document.documentElement,this.customStyle)}};re
 
   </template>
 
-  <script>Polymer({is:"gc-app",behaviors:[Polymer.IronResizableBehavior],properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},language:{type:String,value:"fi"},storage:{type:Object},version:{type:String,value:"v2"},storageLoaded:{type:Boolean,value:!1},dataLoaded:{type:Boolean,value:!1},itemCount:{type:Number,value:0},filterChanged:{type:Boolean,value:!1},filters:{type:Array,value:[!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0]},filterNames:{type:Array,value:["1_1","1_2","1_3","1_4","2_1","2_2","2_3","2_4","2_5","3_1","3_2","3_3","4_1","4_2"]},eventTypes:{type:Array,value:["_1_1_admin","_1_2_campus","_1_3_students","_1_4_teaching","_2_1_art_and_design","_2_2_science_and_technology","_2_3_business","_2_4_research","_2_5_multidisciplinarity","_3_1_entrepreneurship","_3_2_corporate_collaboration","_3_3_academic_collaboration","_4_1_global_event","_4_2_regional_event"]},eventColours:{type:Array,value:["#007DC8","#007DC8","#007DC8","#007DC8","#BA269A","#BA269A","#BA269A","#BA269A","#BA269A","#FF9A00","#FF9A00","#FF9A00","#6BB100","#6BB100"]}},listeners:{"iron-resize":"_onIronResize"},ready:function(){this.$.requestVideoOfTheMonth.generateRequest()},attached:function(){this.async(this.notifyResize,1)},_onIronResize:function(){var e=this.offsetWidth;this.dataLoaded&&(e<900?this.$.toastFilters.close():this.$.toastFilters.open())},initializeDefaultStorage:function(){this.storage={lang:"fi",label:"English"},this.handleLocalstorageLoadEvent()},handleLocalstorageLoadEvent:function(){this.language=this.storage.lang,this.storageLoaded=!0,this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.language+"/eras",this.$.requestEras.generateRequest()},changeLanguage:function(){"fi"==this.storage.lang?(this.set("storage.lang","en"),this.set("storage.label","Suomeksi"),this.language="en"):(this.set("storage.lang","fi"),this.set("storage.label","English"),this.language="fi"),location.reload(!1)},eraDOM:function(e){this.debounce("doSomething",function(){if(this.dataLoaded=!0,this.$.spinner.active=!1,this.$.toastFilters.open(),this.queryParams.event){var e="#eventDiv"+this.queryParams.event;this.$$(e).scrollIntoView();var t="#collapse"+this.queryParams.event;this.$$(t).toggle();var i="#comment"+this.queryParams.event,n="#associations"+this.queryParams.event;this.$$(i).style.display="flex",this.$$(n).style.display="flex"}},300)},languageFinnish:function(){return"fi"==this.language},localisedTitle:function(){return"fi"==this.language?"title_FIN.png":"title.png"},localisedH1:function(){return"fi"==this.language?"Tervetuloa!":"Welcome!"},localisedP1:function(){return"fi"==this.language?"Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen.":"The Aalto timeline tells a story visualising and describing Game Changers, which can be events and innovations, derived from Aalto University and its predecessors. Or people, who have had a great impact on Aalto and the Finnish society."},localisedP2:function(){return"fi"==this.language?"Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jos aikajanalta puuttuu jotain, klikkaa ehdota-nappia alla ja kerro meille. Voit myös lähettää anekdootin suoraan liittyen aikajanalla oleviin tapahtumiin. Odotamme panostasi, suurkiitos siitä etukäteen!":"The timeline is gradually evolving, therefore, we reach out to you to give your contribution in telling the Aalto story from 1849 to date, and into the future. Share your ideas with us! If something is missing from the timeline, click the propose button below and tell us. You can also suggest an anecdote related to an event on the timeline already. We look forward to your comments. Many thanks for your input!"},localisedVideoH1:function(){return"fi"==this.language?"Uusin Muutoksentekijät -video":"Latest Game Changers video"},localisedPropose:function(){return"fi"==this.language?"Ehdota":"Propose"},localisedComment:function(){return"fi"==this.language?"Kommentoi":"Comment"},localisedShare:function(){return"fi"==this.language?"Jaa":"Share"},localisedCommentDescription:function(){return"fi"==this.language?"Onko sinulla tähän tapahtumaan liittyvä anekdootti? Lähetä se ja sisältötiimimme julkaisee niistä osan. Käytä oikeaa nimeäsi ja toimivaa sähköpostiosoitetta niin voimme olla tarvittaessa yhteydessä sinuun.":"Do you have an anekdote relating to this event? Send it to us and our editorial team will publish some of them. Use your real name for signing it and working email we can reach you from should there be questions."},localisedCommentSucceeded:function(){return"fi"==this.language?"Kiitos kommentistasi! Sisältötyöryhmä käy läpi kaikki kommentit ja julkaisee niistä osan. Otamme yhteyttä jos lisäkysymyksiä nousee esiin.":"Thank you for your comment. The editorial team will check all comments and publish some of them. We will contact you if further questions."},localisedCommentFailed:function(){return"fi"==this.language?"Lähetys epäonnistui":"Submit failed"},localisedProposeDescription:function(){return"fi"==this.language?"Puuttuko aikajanalta jotain? Lähetä ehdotus sisältötiimillemme. Olemme kiinnostuneita muutokseen johtaneista tapahtumista Aalto-yliopiston ja sitä edeltäneiden koulujen historiasta.":"Is something missing from the timeline? Send a suggestion for our editorial team. We are interested in game changer events from the history of Aalto University and it's predecessor schools."},localisedProposeSucceeded:function(){return"fi"==this.language?"Kiitos ehdotuksestasi! Sisältötyöryhmä valitsee kaikista ehdotuksista muutoksentekijä tapahtumia. Otamme yhteyttä jos lisäkysymyksiä nousee esiin.":"Thank you for your suggestion. The editorial team will select new game changer events from all the suggestions. We will contact you if further questions."},localisedProposeFailed:function(){return"fi"==this.language?"Lähetys epäonnistui":"Submit failed"},localisedName:function(){return"fi"==this.language?"Nimi":"Name"},localisedEmail:function(){return"fi"==this.language,"Email"},localisedCancel:function(){return"fi"==this.language?"Peruuta":"Cancel"},localisedSubmit:function(){return"fi"==this.language?"Lähetä":"Submit"},localisedShareDescription:function(){return"fi"==this.language?"Jaa linkki alta haluamaasi some-kanavaan":"Share link from below to a channel of you choice"},arrayEmpty:function(e){return 0==e.length},arrayItem:function(e,t,i){return this.get(i,e.base[t])},formatImageArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].url;return t},formatCaptionArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return e=e.replace(/%2F/gi,"/")},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},getProposeURL:function(){return this.domain+"/gamechangers/v1/proposal"},handleResponseVideoOfTheMonth:function(e){this.videoOfTheMonth=e.detail.response},handleResponseEras:function(e){this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},filtered:function(e,t){var i=this.eventTypes.indexOf(e);return!!this.filters[i]},handleFilter1_1:function(e){this.toggleFilter(0)},handleFilter1_2:function(e){this.toggleFilter(1)},handleFilter1_3:function(e){this.toggleFilter(2)},handleFilter1_4:function(e){this.toggleFilter(3)},handleFilter2_1:function(e){this.toggleFilter(4)},handleFilter2_2:function(e){this.toggleFilter(5)},handleFilter2_3:function(e){this.toggleFilter(6)},handleFilter2_4:function(e){this.toggleFilter(7)},handleFilter2_5:function(e){this.toggleFilter(8)},handleFilter3_1:function(e){this.toggleFilter(9)},handleFilter3_2:function(e){this.toggleFilter(10)},handleFilter3_3:function(e){this.toggleFilter(11)},handleFilter4_1:function(e){this.toggleFilter(12)},handleFilter4_2:function(e){this.toggleFilter(13)},toggleFilter:function(e){var t="#filter_button_"+this.filterNames[e],i=this.filters[e]?"0.3":"1.0";this.filters[e]=!this.filters[e],this.$$(t).style.opacity=i,this.filterChanged=!this.filterChanged},handleEventCollapse:function(e,t,i){var n=e.model.eventItem.id,a="#collapse"+n,o="#comment"+n,s="#associations"+n;if(this.$$(a).opened){try{this.$$(o).style.display="none"}catch(e){}this.$$(s).style.display="none"}else{try{this.$$(o).style.display="flex"}catch(e){}this.$$(s).style.display="flex"}this.$$(a).toggle()},handleAssociationCollapse:function(e,t,i){var n=e.model.eventItem.id,a=e.model.association.id,o="#associationCollapse"+n+a;this.$$(o).toggle()},handleEventComment:function(e,t,i){var n=e.model.eventItem.id,a="#commentDialog"+n;this.$$(a).open()},handleEventShare:function(e,t,i){var n=e.model.eventItem.id,a="#shareDialog"+n;this.$$(a).open()},handleEventPropose:function(e,t,i){this.$$("#proposeDialog").open()},openCreditsDialog:function(){this.$$("#creditsDialog").open()},handleEventCarousel:function(e,t,i){var n=e.model.eventItem.id,a="#carouselDialog"+n;this.$$(a).open()},handleResponseComment:function(e){var t=e.model.eventItem.id,i="#commentDialog"+t;this.$$(i).close(),alert(this.localisedCommentSucceeded())},handleResponsePropose:function(e){this.$$("#proposeDialog").close(),alert(this.localisedProposeSucceeded())},submitComment:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert(this.localisedCommentFailed())}),t.submit()},submitProposal:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/proposal",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert(this.localisedProposeFailed())}),t.submit()},eventColour:function(e){var t,i=this.eventTypes.indexOf(e);return t=i==-1?"#9B9B9B":this.eventColours[i]},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),i=t.getFullYear(),n=i.toString(),a=n.substr(n.length-1);return"0"==a}});</script>
+  <script>Polymer({is:"gc-app",behaviors:[Polymer.IronResizableBehavior],properties:{domain:{type:String,value:"https://deepamehta.aalto.fi"},language:{type:String,value:"fi"},storage:{type:Object},version:{type:String,value:"v2"},storageLoaded:{type:Boolean,value:!1},dataLoaded:{type:Boolean,value:!1},itemCount:{type:Number,value:0},filterChanged:{type:Boolean,value:!1},filters:{type:Array,value:[!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0,!0]},filterNames:{type:Array,value:["1_1","1_2","1_3","1_4","2_1","2_2","2_3","2_4","2_5","3_1","3_2","3_3","4_1","4_2"]},eventTypes:{type:Array,value:["_1_1_admin","_1_2_campus","_1_3_students","_1_4_teaching","_2_1_art_and_design","_2_2_science_and_technology","_2_3_business","_2_4_research","_2_5_multidisciplinarity","_3_1_entrepreneurship","_3_2_corporate_collaboration","_3_3_academic_collaboration","_4_1_global_event","_4_2_regional_event"]},eventColours:{type:Array,value:["#007DC8","#007DC8","#007DC8","#007DC8","#BA269A","#BA269A","#BA269A","#BA269A","#BA269A","#FF9A00","#FF9A00","#FF9A00","#6BB100","#6BB100"]}},listeners:{"iron-resize":"_onIronResize"},ready:function(){this.$.requestVideoOfTheMonth.generateRequest()},attached:function(){this.async(this.notifyResize,1)},_onIronResize:function(){var e=this.offsetWidth;this.dataLoaded&&(e<900?this.$.toastFilters.close():this.$.toastFilters.open())},initializeDefaultStorage:function(){this.storage={lang:"fi",label:"English"},this.handleLocalstorageLoadEvent()},handleLocalstorageLoadEvent:function(){this.language=this.storage.lang,this.storageLoaded=!0,this.$.requestEras.url=this.domain+"/gamechangers/"+this.version+"/"+this.language+"/eras",this.$.requestEras.generateRequest()},changeLanguage:function(){"fi"==this.storage.lang?(this.set("storage.lang","en"),this.set("storage.label","Suomeksi"),this.language="en"):(this.set("storage.lang","fi"),this.set("storage.label","English"),this.language="fi"),location.reload(!1)},eraDOM:function(e){this.debounce("doSomething",function(){if(this.dataLoaded=!0,this.$.spinner.active=!1,this.$.toastFilters.open(),this.queryParams.event){var e="#eventDiv"+this.queryParams.event;this.$$(e).scrollIntoView();var t="#collapse"+this.queryParams.event;this.$$(t).toggle();var i="#comment"+this.queryParams.event,n="#associations"+this.queryParams.event;this.$$(i).style.display="flex",this.$$(n).style.display="flex"}},300)},languageFinnish:function(){return"fi"==this.language},localisedTitle:function(){return"fi"==this.language?"title_FIN.png":"title.png"},localisedTitleMobile:function(){return"fi"==this.language?"title_FIN_mobile.png":"title_mobile.png"},localisedH1:function(){return"fi"==this.language?"Tervetuloa!":"Welcome!"},localisedP1:function(){return"fi"==this.language?"Aalto-yliopiston aikajana kertoo visuaalisin keinoin tarinoita Muutoksentekijöistä – henkilöistä, tapahtumista tai innovaatioista – Aallon tai sen edeltäjien piirissä. Muutoksentekijöistä, joilla on ollut suuri vaikutus suomalaisen yhteiskunnan kehitykseen.":"The Aalto timeline tells a story visualising and describing Game Changers, which can be events and innovations, derived from Aalto University and its predecessors. Or people, who have had a great impact on Aalto and the Finnish society."},localisedP2:function(){return"fi"==this.language?"Aikajana kehittyy vähitellen, joten pyydämme myös sinun panostasi Aallon tarinaan alkaen vuodesta 1849. Kerro visiosi Aallon tulevaisuudesta. Jos aikajanalta puuttuu jotain, klikkaa ehdota-nappia alla ja kerro meille. Voit myös lähettää anekdootin suoraan liittyen aikajanalla oleviin tapahtumiin. Odotamme panostasi, suurkiitos siitä etukäteen!":"The timeline is gradually evolving, therefore, we reach out to you to give your contribution in telling the Aalto story from 1849 to date, and into the future. Share your ideas with us! If something is missing from the timeline, click the propose button below and tell us. You can also suggest an anecdote related to an event on the timeline already. We look forward to your comments. Many thanks for your input!"},localisedVideoH1:function(){return"fi"==this.language?"Uusin Muutoksentekijät -video":"Latest Game Changers video"},localisedPropose:function(){return"fi"==this.language?"Ehdota":"Propose"},localisedComment:function(){return"fi"==this.language?"Kommentoi":"Comment"},localisedShare:function(){return"fi"==this.language?"Jaa":"Share"},localisedCommentDescription:function(){return"fi"==this.language?"Onko sinulla tähän tapahtumaan liittyvä anekdootti? Lähetä se ja sisältötiimimme julkaisee niistä osan. Käytä oikeaa nimeäsi ja toimivaa sähköpostiosoitetta niin voimme olla tarvittaessa yhteydessä sinuun.":"Do you have an anekdote relating to this event? Send it to us and our editorial team will publish some of them. Use your real name for signing it and working email we can reach you from should there be questions."},localisedCommentSucceeded:function(){return"fi"==this.language?"Kiitos kommentistasi! Sisältötyöryhmä käy läpi kaikki kommentit ja julkaisee niistä osan. Otamme yhteyttä jos lisäkysymyksiä nousee esiin.":"Thank you for your comment. The editorial team will check all comments and publish some of them. We will contact you if further questions."},localisedCommentFailed:function(){return"fi"==this.language?"Lähetys epäonnistui":"Submit failed"},localisedProposeDescription:function(){return"fi"==this.language?"Puuttuko aikajanalta jotain? Lähetä ehdotus sisältötiimillemme. Olemme kiinnostuneita muutokseen johtaneista tapahtumista Aalto-yliopiston ja sitä edeltäneiden koulujen historiasta.":"Is something missing from the timeline? Send a suggestion for our editorial team. We are interested in game changer events from the history of Aalto University and it's predecessor schools."},localisedProposeSucceeded:function(){return"fi"==this.language?"Kiitos ehdotuksestasi! Sisältötyöryhmä valitsee kaikista ehdotuksista muutoksentekijä tapahtumia. Otamme yhteyttä jos lisäkysymyksiä nousee esiin.":"Thank you for your suggestion. The editorial team will select new game changer events from all the suggestions. We will contact you if further questions."},localisedProposeFailed:function(){return"fi"==this.language?"Lähetys epäonnistui":"Submit failed"},localisedName:function(){return"fi"==this.language?"Nimi":"Name"},localisedEmail:function(){return"fi"==this.language,"Email"},localisedCancel:function(){return"fi"==this.language?"Peruuta":"Cancel"},localisedSubmit:function(){return"fi"==this.language?"Lähetä":"Submit"},localisedShareDescription:function(){return"fi"==this.language?"Jaa linkki alta haluamaasi some-kanavaan":"Share link from below to a channel of you choice"},arrayEmpty:function(e){return 0==e.length},arrayItem:function(e,t,i){return this.get(i,e.base[t])},formatImageArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].url;return t},formatCaptionArray:function(e){for(var t=[],i=0;i<e.length;i++)t[i]=e[i].caption;return t},justText:function(e){var t=e.replace(/<img[^>]*>/g,"");return t},stripURL:function(e){return e=e.replace(/%2F/gi,"/")},getCommentURL:function(){return this.domain+"/gamechangers/v1/comment"},getProposeURL:function(){return this.domain+"/gamechangers/v1/proposal"},handleResponseVideoOfTheMonth:function(e){this.videoOfTheMonth=e.detail.response},handleResponseEras:function(e){this.eras=e.detail.response},sortEvents:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},sortEras:function(e,t){return parseFloat(t.from)-parseFloat(e.from)},filtered:function(e,t){var i=this.eventTypes.indexOf(e);return!!this.filters[i]},handleFilter1_1:function(e){this.toggleFilter(0)},handleFilter1_2:function(e){this.toggleFilter(1)},handleFilter1_3:function(e){this.toggleFilter(2)},handleFilter1_4:function(e){this.toggleFilter(3)},handleFilter2_1:function(e){this.toggleFilter(4)},handleFilter2_2:function(e){this.toggleFilter(5)},handleFilter2_3:function(e){this.toggleFilter(6)},handleFilter2_4:function(e){this.toggleFilter(7)},handleFilter2_5:function(e){this.toggleFilter(8)},handleFilter3_1:function(e){this.toggleFilter(9)},handleFilter3_2:function(e){this.toggleFilter(10)},handleFilter3_3:function(e){this.toggleFilter(11)},handleFilter4_1:function(e){this.toggleFilter(12)},handleFilter4_2:function(e){this.toggleFilter(13)},toggleFilter:function(e){var t="#filter_button_"+this.filterNames[e],i=this.filters[e]?"0.3":"1.0";this.filters[e]=!this.filters[e],this.$$(t).style.opacity=i,this.filterChanged=!this.filterChanged},handleEventCollapse:function(e,t,i){var n=e.model.eventItem.id,a="#collapse"+n,o="#comment"+n,s="#associations"+n;if(this.$$(a).opened){try{this.$$(o).style.display="none"}catch(e){}this.$$(s).style.display="none"}else{try{this.$$(o).style.display="flex"}catch(e){}this.$$(s).style.display="flex"}this.$$(a).toggle()},handleAssociationCollapse:function(e,t,i){var n=e.model.eventItem.id,a=e.model.association.id,o="#associationCollapse"+n+a;this.$$(o).toggle()},handleEventComment:function(e,t,i){var n=e.model.eventItem.id,a="#commentDialog"+n;this.$$(a).open()},handleEventShare:function(e,t,i){var n=e.model.eventItem.id,a="#shareDialog"+n;this.$$(a).open()},handleEventPropose:function(e,t,i){this.$$("#proposeDialog").open()},openCreditsDialog:function(){this.$$("#creditsDialog").open()},handleEventCarousel:function(e,t,i){var n=e.model.eventItem.id,a="#carouselDialog"+n;this.$$(a).open()},handleResponseComment:function(e){var t=e.model.eventItem.id,i="#commentDialog"+t;this.$$(i).close(),alert(this.localisedCommentSucceeded())},handleResponsePropose:function(e){this.$$("#proposeDialog").close(),alert(this.localisedProposeSucceeded())},submitComment:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/comment",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert(this.localisedCommentFailed())}),t.submit()},submitProposal:function(e){var t=e.target.parentElement;t.addEventListener("iron-form-presubmit",function(){this.request.method="PUT",this.request.url="https://deepamehta.aalto.fi/gamechangers/v1/proposal",this.request.handleAs="json"}),t.addEventListener("iron-form-error",function(e){alert(this.localisedProposeFailed())}),t.submit()},eventColour:function(e){var t,i=this.eventTypes.indexOf(e);return t=i==-1?"#9B9B9B":this.eventColours[i]},eventYear:function(e){var t=new Date(e);return t.getFullYear()},yearIsFirstInDecade:function(e){var t=new Date(e),i=t.getFullYear(),n=i.toString(),a=n.substr(n.length-1);return"0"==a}});</script>
 
 </dom-module>
 </body></html>

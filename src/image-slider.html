@@ -23,18 +23,19 @@
         position: relative;
         width: 100%;
         height: 70vh;
+        top: 30px;
       }
 
       footer {
-        position: absolute;
-        left: 0;
-        bottom: 0;
+
       }
 
       p {
+        position: relative;
         font-size: 16px;
-        margin: 10px 70px 10px 70px;
+        margin: 30px 70px 0px 70px;
         text-align: center;
+        bottom: 0;
       }
 
       paper-icon-button.round {
@@ -48,34 +49,39 @@
         top: 50%;
       }
 
+      paper-icon-button.notround {
+        padding: 2px;
+        margin: 5px;
+        top: 50%;
+      }
+
       .flex-horizontal {
         @apply(--layout-horizontal);
       }
       .flexchild {
         @apply(--layout-flex);
       }
-
     </style>
 
-    <!-- <div style="position: relative;"> -->
+    <div style="position: relative;">
 
       <div class="outer">
         <div class="container flex-horizontal">
-          <div class="leftButton">
-              <paper-icon-button src="/icns/chevron_left.svg" on-tap="prev" class="round" ></paper-icon-button>
+          <div id="leftButton">
+              <paper-icon-button src="/icns/chevron_left.svg" on-tap="prev" class="notround" ></paper-icon-button>
           </div>
           <div class="flexchild">
             <iron-image id="image" src="{{_arrayItem(images.*, currentPos)}}" title$="{{_arrayItem(images.*, currentPos)}}" sizing="contain" on-track="_handleTrack"></iron-image>
           </div>
-          <div class="rightButton">
-              <paper-icon-button src="/icns/chevron_right.svg" on-tap="next" class="round" ></paper-icon-button>
+          <div id="rightButton">
+              <paper-icon-button src="/icns/chevron_right.svg" on-tap="next" class="notround" ></paper-icon-button>
           </div>
         </div>
         <div class="footer">
-          <p> {{_arrayItem(captions.*, currentPos)}} </p>
+          <p class="footer"> {{_arrayItem(captions.*, currentPos)}} </p>
         </div>
       </div>
-  <!--  </div> -->
+   </div>
 
   </template>
 
@@ -150,7 +156,8 @@
           }
           this.currentPos = 0;
           this.hidden = false;
-          //this.$.controls.hidden = this.images.length == 1;
+          this.$.leftButton.hidden = this.images.length == 1;
+          this.$.rightButton.hidden = this.images.length == 1;
         }
       },
       _onCurrentPosChanged: function() {
